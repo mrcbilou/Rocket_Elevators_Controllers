@@ -1,0 +1,48 @@
+SEQUENCE    
+    IF call_button is pressed    
+        DETERMINE the closest elevator_cage based on current_required_floor 
+        CONTACT closest elevator_cage 
+    ENDIF
+ENDSEQUENCE
+
+SEQUENCE
+    WHEN elevator_cage reaches current_required_floor 
+        open_doors
+    IF floor_selection_button is pressed 
+        INIT 5 second countdown
+            WHEN 5 second countdown is done
+                close_doors
+                elevator_cage goes towards target_floor
+                IF call_button is pressed between target_floor and current_floor
+                    open_doors
+                    INIT 5 second countdown
+                         WHEN 5 second countdown is done
+                             close_doors
+                    ELSE go to target_floor 
+                        open_doors
+                            INIT 5 second countdown
+                         WHEN 5 second countdown is done
+                             close_doors  
+                ENDIF  
+        
+    ELSE
+         INIT 5 second countdown
+            WHEN 5 second countdown is done
+                close_doors
+
+    ENDIF
+
+REPEAT 
+    SEQUENCE #2 
+UNTIL 
+    no buttons are pressed
+ENDSEQUENCE
+
+SEQUENCE 
+    IF no buttons are pressed AND elevator_cage are inactive FOR 15 minutes
+        elevator_cage goes back to ground_floor "floor 1"
+    ENDIF
+ENDSEQUENCE
+
+        
+
