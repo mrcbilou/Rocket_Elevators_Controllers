@@ -27,24 +27,53 @@ DEFINE Column USING id AND status:
         [cageB]
     ENDSEQUENCE
 ENDDEFINE
+FOR EACH elevator_cage
+    SET column "number" TO INSTANTIATE column with "number" and online
+    SET column "number" TO offline
+ENDFOR
 SET column1 TO INSTANTIATE Column WITH 1 AND online
 SET column1 status TO offline
 
-DEFINE Cage USING id , direction and status 
+
+DEFINE elevator_cage USING id , direction and status 
     ID : "elevator_cage",
     Status : moving, idle
+    ElevatorCageList: SET to empty List
+    SEQUENCE createElevatorCageList USING cage_amount
+        [elevator_cageA]
+        [elevator_cageB]
+    ENDSEQUENCE
 ENDDEFINE
-SET cageA TO INSTANTIATE cage WITH A AND online
-SET cageA status TO offline
-SET cageB TO INSTANTIATE cage WITH B AND online
-SET cageB status TO offline
+FOR EACH elevator_cage
+    SET elevator_cage "letter" TO INSTANTIATE elevator_cage with "letter" and moving
+    SET elevator_cage "letter" TO Idle
+ENDFOR
+
+
+
 
 DEFINE call_button_up USING id AND status:
     ID: call_button_up,
     Status: pressed, not pressed
 ENDDEFINE
-SET call_button_up TO INSTANTIATE WITH pressed
-SET call_button_up status TO not_pressed
+FOR EACH call_button_up
+    SET call_button_up TO INSTANTIATE call_button_up with pressed
+    SET call_button_up TO closed
+ENDFOR
+
+
+
+DEFINE call_button_down USING id AND status:
+    ID: call_button_down,
+    Status: pressed, not pressed
+ENDDEFINE
+FOR EACH call_button_down
+    SET call_button_down TO INSTANTIATE call_button_down with pressed
+    SET call_button_down TO closed
+ENDFOR
+
+
+
 
 DEFINE cage_doors USING id AND status:
     ID: cage_doors,
@@ -55,15 +84,46 @@ DEFINE cage_doors USING id AND status:
         [cageDoorB]
     ENDSEQUENCE
 ENDDEFINE
-SET cageDoorA TO INSTANTIATE WITH A and opened
-SET cageDoorA Status TO closed
-SET cageDoorB TO INSTANTIATE WITH B and opened
-SET cageDoorB Status TO closed
+FOR EACH cage_doors
+    SET cage"letter" TO INSTANTIATE cage with "letter" and opened
+    SET cage"letter" TO closed
+ENDFOR
 
-DEFINE Doors USING id AND status:
+
+
+DEFINE floor_doors USING id AND status:
     ID: doors,
     Status: opened, closed
+    FloorDoorList: SET to empty List
+    SEQUENCE createFloorDoorList USING floor_amount
+        [floorDoor1A]
+        [floorDoor1B]
+        [floorDoor2A]
+        [floorDoor2B]
+        [floorDoor3A]
+        [floorDoor3B]
+        [floorDoor4A]
+        [floorDoor4B]
+        [floorDoor5A]
+        [floorDoor5B]
+        [floorDoor6A]
+        [floorDoor6B]
+        [floorDoor7A]
+        [floorDoor7B]
+        [floorDoor8A]
+        [floorDoor8B]
+        [floorDoor9A]
+        [floorDoor9B]
+        [floorDoor10A]
+        [floorDoor10B]
+    ENDSEQUENCE
 ENDDEFINE
+FOR EACH floor_doors
+    SET floorDoor"number"A TO INSTANTIATE floorDoor with "number"A and opened
+    SET floorDoor"number"A TO closed
+    SET floorDoor"number"B TO INSTANTIATE floorDoor with "number"B and opened
+    SET floorDoor"number"B TO closed
+ENDFOR
 
 
 DEFINE floor_selection_button USING id AND status:
@@ -83,8 +143,10 @@ DEFINE floor_selection_button USING id AND status:
         [floor10]
     ENDSEQUENCE
 ENDDEFINE
-SET column1 TO INSTANTIATE Column WITH 1 AND online
-SET column1 status TO offline
+FOR EACH floor_selection_button
+    SET floor"number" TO INSTANTIATE floor with "number" and pressed
+    SET floor"number" TO  not_pressed
+ENDFOR
 
 
 
