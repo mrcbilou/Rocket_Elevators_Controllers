@@ -1,34 +1,143 @@
-SEQUENCE    
-    IF call_button is pressed    
-        DETERMINE the closest elevator_cage based on current_required_floor 
-        CONTACT closest elevator_cage 
+// Inventory // 
+
+//findelevators with floor and direction
+
+//current_direction = "UP" or "DOWN"
+//call_button = Exterior button that calls an elevator_cage in a column
+//elevator_cage = The elevator itself
+//current_required_floor = The floor in wich a call_button has been pressed
+//responding_elevator_cage = The cage that is the closest to the caller determined by the distance between current_required_floor and the current_direction of the cage "the closest awnsers"
+//cage_doors = The function of the doors opening
+//close_doors = The function of the doors closing
+//floor_selection_button = The buttons inside the elevator that allows user to choose the floor they need to go to 
+//target_floor = floor the user has selected using floor_selection_button
+//current_floor = The floor at witch the elevator_cage is currently sitting
+//ground_floor = Ground floor of the building "refers to floor GF"
+//countdown_timer = Timer for elevator doors 
+//"destination floor ???"
+// requested_floor= based on floor_selection_button 
+
+
+DEFINE Column USING id AND status:
+    ID: column,
+    Status: online, offline
+    ElevatorList: SET to empty List
+    SEQUENCE createElevatorList USING cage_amount
+        [cageA]
+        [cageB]
+    ENDSEQUENCE
+ENDDEFINE
+SET column1 TO INSTANTIATE Column WITH 1 AND online
+SET column1 status TO offline
+
+DEFINE Cage USING id , direction and status 
+    ID : "elevator_cage",
+    Status : moving, idle
+ENDDEFINE
+SET cageA TO INSTANTIATE cage WITH A AND online
+SET cageA status TO offline
+SET cageB TO INSTANTIATE cage WITH B AND online
+SET cageB status TO offline
+
+DEFINE call_button_up USING id AND status:
+    ID: call_button_up,
+    Status: pressed, not pressed
+ENDDEFINE
+SET call_button_up TO INSTANTIATE WITH pressed
+SET call_button_up status TO not_pressed
+
+DEFINE cage_doors USING id AND status:
+    ID: cage_doors,
+    Status: opened, closed
+     CageDoorList: SET to empty List
+    SEQUENCE createCageDoorList USING cage_amount
+        [cageDoorA]
+        [cageDoorB]
+    ENDSEQUENCE
+ENDDEFINE
+SET cageDoorA TO INSTANTIATE WITH A and opened
+SET cageDoorA Status TO closed
+SET cageDoorB TO INSTANTIATE WITH B and opened
+SET cageDoorB Status TO closed
+
+DEFINE Doors USING id AND status:
+    ID: doors,
+    Status: opened, closed
+ENDDEFINE
+
+
+DEFINE floor_selection_button USING id AND status:
+    ID: floor_selection_button,
+    Status: pressed, not pressed
+    FloorList: SET to empty List
+    SEQUENCE createFloorList USING floor_amount
+        [floor1]
+        [floor2]
+        [floor3]
+        [floor4]
+        [floor5]
+        [floor6]
+        [floor7]
+        [floor8]
+        [floor9]
+        [floor10]
+    ENDSEQUENCE
+ENDDEFINE
+SET column1 TO INSTANTIATE Column WITH 1 AND online
+SET column1 status TO offline
+
+
+
+
+
+
+
+
+
+
+
+
+
+SEQUENCE requestElevator USING current_required_floor and current_direction 
+    SET current_required_floor TO "3"
+    SET current _direction TO "UP"
+    IF call_button is pressed 
+        READ current_required_floor 
+        SET destination_floor TO current_required_floor   
+        DETERMINE responding_elevator_cage USING current_required_floor and current_direction
+        CONTACT responding_elevator_cage 
     ENDIF
+    CALL boardingElevator
 ENDSEQUENCE
 
-SEQUENCE
-    WHEN elevator_cage reaches current_required_floor 
-        open_doors
-    IF floor_selection_button is pressed 
-        INIT 5 second countdown
+
+
+
+SEQUENCE boardingElevator USING current_floor, target_floor and current_required_floor
+    WHEN elevator_cage EQUALS current_required_floor 
+        SET cage_doors TO "OPENED"
+    IF floor_selection_button is pressed THEN INIT 5 second countdown
             WHEN 5 second countdown is done
-                close_doors
-                elevator_cage goes towards target_floor
+                SET cage_doors TO "CLOSED"
+               "SET elevator_cage TO target_floor"
                 IF call_button is pressed between target_floor and current_floor
-                    open_doors
-                    INIT 5 second countdown
+                    SET cage_doors TO "OPENED"
+                    SET countdown_timer TO 5 seconds
+                    INIT countdown_timer
                          WHEN 5 second countdown is done
-                             close_doors
+                             SET cage_doors TO "CLOSED"
                     ELSE go to target_floor 
-                        open_doors
-                            INIT 5 second countdown
-                         WHEN 5 second countdown is done
-                             close_doors  
+                        SET cage_doors TO "OPENED"
+                        SET countdown_timer TO 5 second
+                            INIT countdown_timer
+                            ON countdown_timer END 
+                            SET cage_doors TO "CLOSED" 
                 ENDIF  
         
     ELSE
          INIT 5 second countdown
             WHEN 5 second countdown is done
-                close_doors
+                SET cage_doors TO "CLOSED"
 
     ENDIF
 
@@ -40,8 +149,9 @@ ENDSEQUENCE
 
 SEQUENCE 
     IF no buttons are pressed AND elevator_cage are inactive FOR 15 minutes
-        elevator_cage goes back to ground_floor "floor 1"
+        elevator_cage goes back to ground_floor "floor GF"
     ENDIF
+    SET current_floor TO 1 
 ENDSEQUENCE
 
         
