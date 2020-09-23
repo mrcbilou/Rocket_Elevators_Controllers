@@ -1,152 +1,104 @@
-// Inventory // 
+'// Inventory // 
 
-//findelevators with floor and direction
+'//findelevators with floor and direction
 
-//current_direction = "UP" or "DOWN"
-//call_button = Exterior button that calls an elevator_cage in a column
-//elevator_cage = The elevator itself
-//current_required_floor = The floor in wich a call_button has been pressed
-//responding_elevator_cage = The cage that is the closest to the caller determined by the distance between current_required_floor and the current_direction of the cage "the closest awnsers"
-//cage_doors = The function of the doors opening
-//close_doors = The function of the doors closing
-//floor_selection_button = The buttons inside the elevator that allows user to choose the floor they need to go to 
-//target_floor = floor the user has selected using floor_selection_button
-//current_floor = The floor at witch the elevator_cage is currently sitting
-//ground_floor = Ground floor of the building "refers to floor GF"
-//countdown_timer = Timer for elevator doors 
-//"destination floor ???"
-// requested_floor= based on floor_selection_button 
+'//current_direction = "UP" or "DOWN"
+'//call_button = Exterior button that calls an elevator_cage in a column
+'//elevator_cage = The elevator itself
+'//current_required_floor = The floor in wich a call_button has been pressed
+'//responding_elevator_cage = The cage that is the closest to the caller determined by the distance between current_required_floor and the current_direction of the cage "the closest awnsers"
+'//cage_doors = The function of the doors opening
+'//close_doors = The function of the doors closing
+'//floor_selection_button = The buttons inside the elevator that allows user to choose the floor they need to go to 
+'//target_floor = floor the user has selected using floor_selection_button
+'//current_floor = The floor at witch the elevator_cage is currently sitting
+'//ground_floor = Ground floor of the building "refers to floor GF"
+'//countdown_timer = Timer for elevator doors 
+'//"destination floor ???"
+'// requested_floor= based on floor_selection_button 
 
+
+
+DEFINE init_system USING ID AND number_of_floor AND number_elevator AND status 
+    SET column1 TO INSTANTIATE column WITH 1 AND number_of_floor AND number_elevator AND ON
+    CALL column1.createElevatorList
+ENDDEFINE
 
 DEFINE Column USING id AND status:
-    ID: column,
+    ID: id,
     Status: online, offline
     ElevatorList: SET to empty List
-    SEQUENCE createElevatorList USING cage_amount
-        [cageA]
-        [cageB]
+    SEQUENCE createElevatorList USING number_of_floor
+       PUSH New Elevator USING number_of_floor IN ElevatorList
+    ENDSEQUENCE
+
+    DirectionButtonList: SET to empty List
+    SEQUENCE createDirectionButtonList USING floor_amount
+        FOR EACH floor 
+                PUSH New direction_button USING floor_amount IN DirectionButtonList
+            EXCEPTION
+                WHEN current_floor = floor_amount 
+                    ADD direction_button "DOWN" ONLY TO DirectionButtonList
+                END
+                WHEN current_floor = lowest_possible_floor
+                    ADD direction_button "UP" ONLY TO DirectionButtonList
+                END
+            END
+        ENDFOR
     ENDSEQUENCE
 ENDDEFINE
-FOR EACH elevator_cage
-    SET column "number" TO INSTANTIATE column with "number" and online
-    SET column "number" TO offline
-ENDFOR
-SET column1 TO INSTANTIATE Column WITH 1 AND online
-SET column1 status TO offline
 
 
-DEFINE elevator_cage USING id , direction and status 
-    ID : "elevator_cage",
+
+DEFINE Elevator USING id , direction AND status AND floor_amount
+    ID :id,
+    Direction: UP, DOWN
     Status : moving, idle
-    ElevatorCageList: SET to empty List
-    SEQUENCE createElevatorCageList USING cage_amount
-        [elevator_cageA]
-        [elevator_cageB]
+     FloorButtonList: SET to empty List
+    SEQUENCE createFloorButtonList USING floor_amount 
+     SET TEMPID TO 1
+       FOR floor_amount
+            ADD (INSTANTIATE floor_selection_button WITH TEMPID AND 1 AND "UP" AND "DOWN") TO FloorButtonList
+                WHEN bottom_floor ADD EXCEPTION (INSTANTIATE floor_selection_button WITH TEMPID AND 1 AND "DOWN") TO FloorButtonList
+                END
+                WHEN top_floor ADD EXCEPTION (INSTANTIATE floor_selection_button WITH TEMPID AND 1 AND "DOWN") TO FloorButtonList
+                END
+            INCREMENT TEMPID
+       ENDFOR
     ENDSEQUENCE
 ENDDEFINE
-FOR EACH elevator_cage
-    SET elevator_cage "letter" TO INSTANTIATE elevator_cage with "letter" and moving
-    SET elevator_cage "letter" TO Idle
-ENDFOR
 
 
 
 
-DEFINE call_button_up USING id AND status:
-    ID: call_button_up,
+DEFINE Direction Button USING id AND Direction AND status :
+    ID: id,
+    directions: UP, DOWN
     Status: pressed, not pressed
+
 ENDDEFINE
 FOR EACH call_button_up
     SET call_button_up TO INSTANTIATE call_button_up with pressed
     SET call_button_up TO closed
-ENDFOR
-
-
-
-DEFINE call_button_down USING id AND status:
-    ID: call_button_down,
-    Status: pressed, not pressed
-ENDDEFINE
-FOR EACH call_button_down
     SET call_button_down TO INSTANTIATE call_button_down with pressed
     SET call_button_down TO closed
 ENDFOR
 
 
 
-
-DEFINE cage_doors USING id AND status:
-    ID: cage_doors,
-    Status: opened, closed
-     CageDoorList: SET to empty List
-    SEQUENCE createCageDoorList USING cage_amount
-        [cageDoorA]
-        [cageDoorB]
-    ENDSEQUENCE
-ENDDEFINE
-FOR EACH cage_doors
-    SET cage"letter" TO INSTANTIATE cage with "letter" and opened
-    SET cage"letter" TO closed
-ENDFOR
-
-
-
-DEFINE floor_doors USING id AND status:
+DEFINE Floor Doors USING id AND status:
     ID: doors,
     Status: opened, closed
     FloorDoorList: SET to empty List
-    SEQUENCE createFloorDoorList USING floor_amount
-        [floorDoor1A]
-        [floorDoor1B]
-        [floorDoor2A]
-        [floorDoor2B]
-        [floorDoor3A]
-        [floorDoor3B]
-        [floorDoor4A]
-        [floorDoor4B]
-        [floorDoor5A]
-        [floorDoor5B]
-        [floorDoor6A]
-        [floorDoor6B]
-        [floorDoor7A]
-        [floorDoor7B]
-        [floorDoor8A]
-        [floorDoor8B]
-        [floorDoor9A]
-        [floorDoor9B]
-        [floorDoor10A]
-        [floorDoor10B]
+    SEQUENCE createFloorDoorList USING floor_amount AND elevator_amount
+        FOR EACH  elevator in ElevatorList 
+        PUSH NEW floor_door  USING floor_amount IN FloorDoorList
+        ENDFOR
     ENDSEQUENCE
 ENDDEFINE
-FOR EACH floor_doors
-    SET floorDoor"number"A TO INSTANTIATE floorDoor with "number"A and opened
-    SET floorDoor"number"A TO closed
-    SET floorDoor"number"B TO INSTANTIATE floorDoor with "number"B and opened
-    SET floorDoor"number"B TO closed
-ENDFOR
 
 
-DEFINE floor_selection_button USING id AND status:
-    ID: floor_selection_button,
-    Status: pressed, not pressed
-    FloorList: SET to empty List
-    SEQUENCE createFloorList USING floor_amount
-        [floor1]
-        [floor2]
-        [floor3]
-        [floor4]
-        [floor5]
-        [floor6]
-        [floor7]
-        [floor8]
-        [floor9]
-        [floor10]
-    ENDSEQUENCE
-ENDDEFINE
-FOR EACH floor_selection_button
-    SET floor"number" TO INSTANTIATE floor with "number" and pressed
-    SET floor"number" TO  not_pressed
-ENDFOR
+
 
 
 
@@ -176,19 +128,20 @@ ENDSEQUENCE
 
 
 SEQUENCE boardingElevator USING current_floor, target_floor and current_required_floor
-    WHEN elevator_cage EQUALS current_required_floor 
+    WHEN elevator EQUALS current_required_floor 
         SET cage_doors TO "OPENED"
     IF floor_selection_button is pressed THEN INIT 5 second countdown
             WHEN 5 second countdown is done
                 SET cage_doors TO "CLOSED"
-               "SET elevator_cage TO target_floor"
-                IF call_button is pressed between target_floor and current_floor
+               SET elevator_cage TO "MOVING" TO target_floor
+                IF call_button is pressed between target_floor AND current_floor AND requested_direction IS EQUAL TO current_direction 
+                    SET ele
                     SET cage_doors TO "OPENED"
                     SET countdown_timer TO 5 seconds
                     INIT countdown_timer
                          WHEN 5 second countdown is done
                              SET cage_doors TO "CLOSED"
-                    ELSE go to target_floor 
+                    ELSE SET elevator TO "MOVING" TO target_floor 
                         SET cage_doors TO "OPENED"
                         SET countdown_timer TO 5 second
                             INIT countdown_timer
@@ -210,8 +163,8 @@ UNTIL
 ENDSEQUENCE
 
 SEQUENCE 
-    IF no buttons are pressed AND elevator_cage are inactive FOR 15 minutes
-        elevator_cage goes back to ground_floor "floor GF"
+    IF no buttons are pressed AND Elevator are inactive FOR 15 minutes
+        Elevator goes back to ground_floor "floor GF"
     ENDIF
     SET current_floor TO 1 
 ENDSEQUENCE
