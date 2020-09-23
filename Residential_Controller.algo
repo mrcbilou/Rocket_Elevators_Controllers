@@ -18,50 +18,33 @@
 '// requested_floor= based on floor_selection_button 
 
 
-
+'<------------------SYSTEM INITIALIZATION------------------>
 DEFINE init_system USING ID AND number_of_floor AND number_elevator AND status 
-    SET column1 TO INSTANTIATE column WITH 1 AND number_of_floor AND number_elevator AND ON
+    SET column1 TO INSTANTIATE column WITH 1 AND number_of_floor AND number_elevator AND "ON"
     CALL column1.createElevatorList
 ENDDEFINE
 
-DEFINE Column USING id AND status:
+
+'<------------------COLUMN DEFINITION---------------------->
+DEFINE Column USING id AND status AND floor_amount:
     ID: id,
     Status: online, offline
     ElevatorList: SET to empty List
-    SEQUENCE createElevatorList USING number_of_floor
-       PUSH New Elevator USING number_of_floor IN ElevatorList
-    ENDSEQUENCE
-
-    DirectionButtonList: SET to empty List
-    SEQUENCE createDirectionButtonList USING floor_amount
-        FOR EACH floor 
-                PUSH New direction_button USING floor_amount IN DirectionButtonList
-            EXCEPTION
-                WHEN current_floor = floor_amount 
-                    ADD direction_button "DOWN" ONLY TO DirectionButtonList
-                END
-                WHEN current_floor = lowest_possible_floor
-                    ADD direction_button "UP" ONLY TO DirectionButtonList
-                END
-            END
+   
+    SEQUENCE createElevatorList USING elevator_amount
+     SET TEMPID TO 1
+        FOR elevator_amount
+            ADD ( INSTANTIATE elevator WITH 1 AND "online" AND floor_amount) TO ElevatorList
+            INCREMENT TEMPID
         ENDFOR
     ENDSEQUENCE
-ENDDEFINE
-
-
-
-DEFINE Elevator USING id , direction AND status AND floor_amount
-    ID :id,
-    Direction: UP, DOWN
-    Status : moving, idle
-     FloorButtonList: SET to empty List
-    SEQUENCE createFloorButtonList USING floor_amount 
+    SEQUENCE createDirectionButtonList USING ID AND direction AND  floor_amount 
      SET TEMPID TO 1
        FOR floor_amount
-            ADD (INSTANTIATE floor_selection_button WITH TEMPID AND 1 AND "UP" AND "DOWN") TO FloorButtonList
-                WHEN bottom_floor ADD EXCEPTION (INSTANTIATE floor_selection_button WITH TEMPID AND 1 AND "DOWN") TO FloorButtonList
+            ADD (INSTANTIATE direction_button WITH TEMPID AND 1 AND "UP" AND "DOWN" AND floor_amount) TO DirectionButtonList
+                WHEN bottom_floor ADD EXCEPTION (INSTANTIATE direction_button WITH TEMPID AND 1 AND "DOWN") TO DirectionButtonList
                 END
-                WHEN top_floor ADD EXCEPTION (INSTANTIATE floor_selection_button WITH TEMPID AND 1 AND "DOWN") TO FloorButtonList
+                WHEN top_floor ADD EXCEPTION (INSTANTIATE direction_button WITH TEMPID AND 1 AND "DOWN") TO DirectionButtonList
                 END
             INCREMENT TEMPID
        ENDFOR
@@ -69,58 +52,101 @@ DEFINE Elevator USING id , direction AND status AND floor_amount
 ENDDEFINE
 
 
+'<------------------ELEVATOR DEFINITION---------------------->
+DEFINE Elevator USING id , AND status AND floor_amount
+    ID :id,
+    Direction: UP, DOWN
+    Status : moving, idle
+     FLoorSelectionButtonList: SET to empty List
+    SEQUENCE createFLoorSelectionButtonList USING ID AND floor_amount AND floor_number
+     SET TEMPID TO 1  
+     SET floor_number to 1
+        FOR floor_amount 
+            ADD (INSTANTIATE floor_selection_button WITH TEMPID AND 1 AND floor_number AND floor_amount) TO FLoorSelectionButtonList
+            INCREMENT TEMPID
+            INCREMENT floor_number
+        ENDFOR
+    ENDSEQUENCE
 
-
-DEFINE Direction Button USING id AND Direction AND status :
-    ID: id,
-    directions: UP, DOWN
-    Status: pressed, not pressed
-
-ENDDEFINE
-FOR EACH call_button_up
-    SET call_button_up TO INSTANTIATE call_button_up with pressed
-    SET call_button_up TO closed
-    SET call_button_down TO INSTANTIATE call_button_down with pressed
-    SET call_button_down TO closed
-ENDFOR
-
-
-
-DEFINE Floor Doors USING id AND status:
-    ID: doors,
-    Status: opened, closed
-    FloorDoorList: SET to empty List
-    SEQUENCE createFloorDoorList USING floor_amount AND elevator_amount
-        FOR EACH  elevator in ElevatorList 
-        PUSH NEW floor_door  USING floor_amount IN FloorDoorList
+     ElevatorDoorList: SET to empty List
+    SEQUENCE createElevatorDoorList USING ID AND status AND elevator_amount
+     SET TEMPID TO 1
+     SET elevator_amount TO 1 
+        FOR elevator_amount
+            ADD ( INSTANTIATE elevator_door with TEMPID AND 1 AND status AND elevator_amount) TO elevator
+            INCREMENT TEMPID
+            INCREMENT elevator_amount
         ENDFOR
     ENDSEQUENCE
 ENDDEFINE
 
 
+'<------------------FLOOR DEFINITION---------------------->
+DEFINE Floor USING id AND status AND floor_amount :
+    ID: id,
+    Status: requested, not_requested
+
+    DirectionButtonList: SET TO empty List
+    SEQUENCE createDirectionButtonList USING ID AND direction AND  floor_amount 
+     SET TEMPID TO 1
+       FOR floor_amount
+            ADD (INSTANTIATE direction_button WITH TEMPID AND 1 AND "UP" AND "DOWN" AND floor_amount) TO DirectionButtonList
+                WHEN bottom_floor ADD EXCEPTION (INSTANTIATE direction_button WITH TEMPID AND 1 AND "DOWN") TO DirectionButtonList
+                END
+                WHEN top_floor ADD EXCEPTION (INSTANTIATE direction_button WITH TEMPID AND 1 AND "DOWN") TO DirectionButtonList
+                END
+            INCREMENT TEMPID
+       ENDFOR
+    ENDSEQUENCE
+
+    FLoorDoorList: SET to empty List
+    SEQUENCE createFloorDoorList USING ID AND status AND floor_amount
+     SET TEMPID TO 1
+     SET floor_amount TO 1 
+        FOR floor_amount
+            ADD ( INSTANTIATE floor_door with TEMPID AND 1 AND status AND floor_amount) TO FloorDoorList
+            INCREMENT TEMPID
+            INCREMENT floor_amount
+        ENDFOR
+    ENDSEQUENCE
+ENDDEFINE
+
+'<------------------DIRECTION BUTTONS DEFINITION---------------------->
+DEFINE Direction Buttons USING id AND properties AND status AND floor_amount :
+    ID: id,
+    properties: UP, DOWN
+    Status: pressed, not pressed
+    SET TEMPID TO 1
+    SET floor_amount TO 1
+    FOR EACH floor_amount
+        ADD (INSTANTIATE direction_button with TEMPID AND 1 AND "UP" AND "DOWN" AND pressed AND floor_amount) TO floor
+        INCREMENT TEMPID
+    ENDFOR
+    SET direction_button TO not pressed
+ENDDEFINE
 
 
 
 
 
 
+'<------------------MAIN SEQUENCE---------------------->
 
 
-
-
-
-
-
-
-SEQUENCE requestElevator USING current_required_floor and current_direction 
+SEQUENCE requestElevator USING current_required_floor AND current_direction AND elevator
     SET current_required_floor TO "3"
     SET current _direction TO "UP"
-    IF call_button is pressed 
-        READ current_required_floor 
-        SET destination_floor TO current_required_floor   
-        DETERMINE responding_elevator_cage USING current_required_floor and current_direction
-        CONTACT responding_elevator_cage 
-    ENDIF
+        FOR EACH elevator
+            IF direction_button is pressed 
+                READ current_required_floor 
+                    IF current_direction EQUALS requested_direction
+                        SET elevator TO "moving" TO requested_floor
+                    ELSE 
+                        SET destination_floor TO current_required_floor
+                    ENDIF
+                END
+            ENDIF
+        ENDFOR
     CALL boardingElevator
 ENDSEQUENCE
 
