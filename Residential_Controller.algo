@@ -94,7 +94,7 @@ elevator.move
 
 SEQUENCE findBestElevator USING current_required_floor AND current_direction AND current_floor AND going_direction
     FOR EACH elevator in column.ElevatorList
-        IF current_direction EQUALS going_direction AND IF current_direction EQUALS "DOWN" AND current_floor IS GREATER THAN current_required_floor OR IF current_direction EQUALS "UP" AND current_floor IS SMALLER THAN current_required_floor THEN
+        IF current_direction EQUALS going_direction AND current_direction EQUALS "DOWN" AND current_floor IS GREATER THAN current_required_floor OR  current_direction EQUALS "UP" AND current_floor IS SMALLER THAN current_required_floor THEN
         ENDIF
         RETURN best_elevator
     ENDFOR

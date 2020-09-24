@@ -1,0 +1,140 @@
+DEFINE init_system USING ID AND number_of_floor AND number_elevator AND status 
+    SET column1 TO INSTANTIATE column WITH 1 AND number_of_floor AND number_elevator AND "ON"
+    CALL column1.createElevatorList
+ENDDEFINE
+
+'<------------------BATTERY DEFINITION---------------------->
+DEFINE Battery USING id AND status AND column_amount:
+    ID: id,
+    Status: online, offline,
+    ColumnList: SET to empty List
+    SEQUENCE createColumnList USING column_amount
+        SET TEMPID TO 1
+            FOR column_amount
+                ADD (INSTANTIATE column WITH 1 AND "online") TO ColumnList
+                INCREMENT TEMPID
+            ENDFOR
+    ENDSEQUENCE
+
+    ColumnGroupList: SET TO empty List
+    SEQUENCE createColumnGroupList USING served_floors AND floor_number
+    SET TEMPID TO 1
+    FOR EACH column in ColumnList
+            IF served_floors IS EQUAL TO lowest_possible_floor AND SMALLER THAN 2 THEN 
+                ADD (INSTANTIATE column_group WITH served_floors AND TEMPID AND 1 ) TO ColumnGroupList
+            ELSE IF served_floors IS EQUAL TO 1 AND SMALLER THAN 24 THEN 
+                ADD (INSTANTIATE column_group WITH served_floors AND TEMPID AND 2 ) TO ColumnGroupList
+            ELSE IF served_floors IS EQUAL TO 24 AND SMALLER THAN 47 THEN 
+                ADD (INSTANTIATE column_group WITH served_floors AND TEMPID AND 3 ) TO ColumnGroupList
+            ELSE IF served_floors IS EQUAL TO 47 AND SMALLER THAN 67 THEN SET column_group TO 4
+                ADD (INSTANTIATE column_group WITH served_floors AND TEMPID AND 4 ) TO ColumnGroupList
+            ENDIF
+    ENDFOR
+ENDDEFINE
+
+
+'<------------------COLUMN DEFINITION---------------------->
+DEFINE Column USING id AND status AND floor_amount:
+    ID: id,
+    Status: online, offline
+    ElevatorList: SET to empty List
+   
+    SEQUENCE createElevatorList USING elevator_amount
+     SET TEMPID TO 1
+        FOR elevator_amount
+            ADD ( INSTANTIATE elevator WITH 1 AND "online" AND floor_amount) TO ElevatorList
+            INCREMENT TEMPID
+        ENDFOR
+    ENDSEQUENCE
+
+    DirectionButtonList: SET TO empty List
+    SEQUENCE createDirectionButtonList USING ID AND direction AND  floor_amount 
+     SET TEMPID TO 1
+       FOR floor_amount
+            ADD (INSTANTIATE direction_button WITH TEMPID AND 1 AND "UP" AND "DOWN" AND floor_amount) TO DirectionButtonList
+                WHEN bottom_floor ADD EXCEPTION (INSTANTIATE direction_button WITH TEMPID AND 1 AND "DOWN") TO DirectionButtonList
+                END
+                WHEN top_floor ADD EXCEPTION (INSTANTIATE direction_button WITH TEMPID AND 1 AND "DOWN") TO DirectionButtonList
+                END
+            INCREMENT TEMPID
+       ENDFOR
+    ENDSEQUENCE
+
+    FloorIndicatorList: SET TO empty List
+     SEQUENCE createFloorIndicatorList USING elevator_amount AND current_floor
+     SET TEMPID TO 1
+        FOR elevator_amount
+            ADD ( INSTANTIATE floor_indicator WITH TEMPID AND 1 AND "on" ) TO FloorIndicatorList
+            INCREMENT TEMPID
+        ENDFOR
+    ENDSEQUENCE
+ENDDEFINE
+
+
+'<------------------ELEVATOR DEFINITION---------------------->
+DEFINE Elevator USING id , AND status AND floor_amount 
+    ID :id,
+    Direction: UP, DOWN
+    Status : moving, idle
+     FLoorSelectionButtonList: SET to empty List
+    SEQUENCE createFLoorSelectionButtonList USING ID AND floor_amount AND floor_number AND floor_number_group 
+     SET TEMPID TO 1  
+        FOR floor_amount 
+            ADD (INSTANTIATE floor_selection_button WITH TEMPID AND 1 AND floor_number AND floor_amount ) TO FLoorSelectionButtonList
+            INCREMENT TEMPID
+            
+        ENDFOR
+    ENDSEQUENCE
+ENDDEFINE
+
+DEFINE DOORS USING ID AND Status
+    ID: id,
+    Status : opened, closed
+ENDDEFINE
+
+'<------------------Floor_indicator DEFINITION---------------------->
+DEFINE Floor_indicator USING ID AND Status AND current_floor
+    ID: id,
+    Status: on, off,
+    READ current_floor
+    DISPLAY current_floor
+ENDDEFINE
+
+
+
+
+'<------------------MAIN SEQUENCE---------------------->
+
+SEQUENCE findBestElevator USING current_required_floor AND current_direction AND current_floor AND going_direction
+    FOR EACH elevator in column.ElevatorList
+        IF current_direction EQUALS going_direction AND  current_direction EQUALS "DOWN" AND current_floor IS GREATER THAN current_required_floor OR  current_direction EQUALS "UP" AND current_floor IS SMALLER THAN current_required_floor THEN
+        ENDIF
+        RETURN best_elevator
+    ENDFOR
+ENDSEQUENCE
+
+SEQUENCE requestElevator USING current_required_floor AND current_direction AND going_direction AND direction_button AND floor_selection_button AND selected_floor    ' ----.parametre
+        FOR EACH elevator in column.ElevatorList
+            IF direction_button EQUALS "pressed"
+                READ current_required_floor 
+                READ going_direction
+                CALL findBestElevator
+                SET best_elevator TO "MOVING" TO current_required_floor
+                WHEN current_floor EQUALS current_required_floor SET doors TO "opened"
+
+            ELSE IF direction_button EQUALS "not pressed" AND floor_selection_button EQUALS "pressed" 
+                SET doors TO "closed"
+                SET elevator TO "moving" TO selected_floor
+             WHEN current_floor EQUALS selected_floor SET doors TO "opened"
+
+            ENDIF
+        ENDFOR
+ENDSEQUENCE
+
+SEQUENCE initialState USING floor_amount AND current_floor
+    IF direction_button AND floor_selection_button EQUALS "not pressed" FOR 5 minutes
+        SET elevator TO "moving" TO floor 1
+        READ current_floor
+        WHEN current_floor EQUALS 1 SET doors TO "closed" AND elevator TO "idle"
+    ENDIF
+ENDSEQUENCE
