@@ -53,7 +53,7 @@ ENDDEFINE
 
 
 '<------------------ELEVATOR DEFINITION---------------------->
-DEFINE Elevator USING id , AND status AND floor_amount
+DEFINE Elevator USING id , AND status AND floor_amount 
     ID :id,
     Direction: UP, DOWN
     Status : moving, idle
@@ -67,63 +67,15 @@ DEFINE Elevator USING id , AND status AND floor_amount
             INCREMENT floor_number
         ENDFOR
     ENDSEQUENCE
-
-     ElevatorDoorList: SET to empty List
-    SEQUENCE createElevatorDoorList USING ID AND status AND elevator_amount
-     SET TEMPID TO 1
-     SET elevator_amount TO 1 
-        FOR elevator_amount
-            ADD ( INSTANTIATE elevator_door with TEMPID AND 1 AND status AND elevator_amount) TO elevator
-            INCREMENT TEMPID
-            INCREMENT elevator_amount
-        ENDFOR
-    ENDSEQUENCE
 ENDDEFINE
 
-
-'<------------------FLOOR DEFINITION---------------------->
-DEFINE Floor USING id AND status AND floor_amount :
+DEFINE DOORS USING ID AND Status
     ID: id,
-    Status: requested, not_requested
-
-    DirectionButtonList: SET TO empty List
-    SEQUENCE createDirectionButtonList USING ID AND direction AND  floor_amount 
-     SET TEMPID TO 1
-       FOR floor_amount
-            ADD (INSTANTIATE direction_button WITH TEMPID AND 1 AND "UP" AND "DOWN" AND floor_amount) TO DirectionButtonList
-                WHEN bottom_floor ADD EXCEPTION (INSTANTIATE direction_button WITH TEMPID AND 1 AND "DOWN") TO DirectionButtonList
-                END
-                WHEN top_floor ADD EXCEPTION (INSTANTIATE direction_button WITH TEMPID AND 1 AND "DOWN") TO DirectionButtonList
-                END
-            INCREMENT TEMPID
-       ENDFOR
-    ENDSEQUENCE
-
-    FLoorDoorList: SET to empty List
-    SEQUENCE createFloorDoorList USING ID AND status AND floor_amount
-     SET TEMPID TO 1
-     SET floor_amount TO 1 
-        FOR floor_amount
-            ADD ( INSTANTIATE floor_door with TEMPID AND 1 AND status AND floor_amount) TO FloorDoorList
-            INCREMENT TEMPID
-            INCREMENT floor_amount
-        ENDFOR
-    ENDSEQUENCE
+    Status : opened, closed
 ENDDEFINE
 
-'<------------------DIRECTION BUTTONS DEFINITION---------------------->
-DEFINE Direction Buttons USING id AND properties AND status AND floor_amount :
-    ID: id,
-    properties: UP, DOWN
-    Status: pressed, not pressed
-    SET TEMPID TO 1
-    SET floor_amount TO 1
-    FOR EACH floor_amount
-        ADD (INSTANTIATE direction_button with TEMPID AND 1 AND "UP" AND "DOWN" AND pressed AND floor_amount) TO floor
-        INCREMENT TEMPID
-    ENDFOR
-    SET direction_button TO not pressed
-ENDDEFINE
+
+
 
 
 
@@ -131,68 +83,47 @@ ENDDEFINE
 
 
 '<------------------MAIN SEQUENCE---------------------->
+find best elevaor
+return best elevator
+alummer button 
+recherchee meilleur 
+retun elevator 
+elevator.move
 
 
-SEQUENCE requestElevator USING current_required_floor AND current_direction AND elevator
-    SET current_required_floor TO "3"
-    SET current _direction TO "UP"
-        FOR EACH elevator
-            IF direction_button is pressed 
+
+SEQUENCE findBestElevator USING current_required_floor AND current_direction AND current_floor AND going_direction
+    FOR EACH elevator in column.ElevatorList
+        IF current_direction EQUALS going_direction AND IF current_direction EQUALS "DOWN" AND current_floor IS GREATER THAN current_required_floor OR IF current_direction EQUALS "UP" AND current_floor IS SMALLER THAN current_required_floor THEN
+        ENDIF
+        RETURN best_elevator
+    ENDFOR
+ENDSEQUENCE
+
+SEQUENCE requestElevator USING current_required_floor AND current_direction AND going_direction AND direction_button AND floor_selection_button AND selected_floor    ' ----.parametre
+        FOR EACH elevator in column.ElevatorList
+            IF direction_button EQUALS "pressed"
                 READ current_required_floor 
-                    IF current_direction EQUALS requested_direction
-                        SET elevator TO "moving" TO requested_floor
-                    ELSE 
-                        SET destination_floor TO current_required_floor
-                    ENDIF
-                END
+                READ going_direction
+                CALL findBestElevator
+                SET best_elevator TO "MOVING" TO current_required_floor
+                WHEN current_floor EQUALS current_required_floor SET doors TO "opened"
+
+            ELSE IF direction_button EQUALS "not pressed" AND floor_selection_button EQUALS "pressed" 
+                SET doors TO "closed"
+                SET elevator TO "moving" TO selected_floor
+             WHEN current_floor EQUALS selected_floor SET doors TO "opened"
+
             ENDIF
         ENDFOR
-    CALL boardingElevator
 ENDSEQUENCE
 
-
-
-
-SEQUENCE boardingElevator USING current_floor, target_floor and current_required_floor
-    WHEN elevator EQUALS current_required_floor 
-        SET cage_doors TO "OPENED"
-    IF floor_selection_button is pressed THEN INIT 5 second countdown
-            WHEN 5 second countdown is done
-                SET cage_doors TO "CLOSED"
-               SET elevator_cage TO "MOVING" TO target_floor
-                IF call_button is pressed between target_floor AND current_floor AND requested_direction IS EQUAL TO current_direction 
-                    SET ele
-                    SET cage_doors TO "OPENED"
-                    SET countdown_timer TO 5 seconds
-                    INIT countdown_timer
-                         WHEN 5 second countdown is done
-                             SET cage_doors TO "CLOSED"
-                    ELSE SET elevator TO "MOVING" TO target_floor 
-                        SET cage_doors TO "OPENED"
-                        SET countdown_timer TO 5 second
-                            INIT countdown_timer
-                            ON countdown_timer END 
-                            SET cage_doors TO "CLOSED" 
-                ENDIF  
-        
-    ELSE
-         INIT 5 second countdown
-            WHEN 5 second countdown is done
-                SET cage_doors TO "CLOSED"
-
+SEQUENCE initialState USING floor_amount AND current_floor
+    IF direction_button AND floor_selection_button EQUALS "not pressed" FOR 5 minutes
+        SET elevator TO "moving" TO floor 1
+        READ current_floor
+        WHEN current_floor EQUALS 1 SET doors TO "closed" AND elevator TO "idle"
     ENDIF
-
-REPEAT 
-    SEQUENCE #2 
-UNTIL 
-    no buttons are pressed
-ENDSEQUENCE
-
-SEQUENCE 
-    IF no buttons are pressed AND Elevator are inactive FOR 15 minutes
-        Elevator goes back to ground_floor "floor GF"
-    ENDIF
-    SET current_floor TO 1 
 ENDSEQUENCE
 
         
