@@ -1,7 +1,3 @@
-DEFINE init_system USING ID AND number_of_floor AND number_elevator AND status 
-    SET column1 TO INSTANTIATE column WITH 1 AND number_of_floor AND number_elevator AND "ON"
-    CALL column1.createElevatorList
-ENDDEFINE
 
 "<------------------BATTERY DEFINITION---------------------->"
 DEFINE Battery USING id AND column_amount AND floor_amount and floor_group_list AND amount_of_elevator_per_column AND battery_lowest_floor
@@ -79,17 +75,17 @@ DEFINE Column USING id AND floor_amount AND _minimumFloor AND _maximumFloor
 
 '<------------------GROUPING OF ALL THE COLUMNS BASED ON SERVED_FLOORS---------------------->
      ColumnGroupList: SET TO empty List
-    SEQUENCE createColumnGroupList USING served_floors AND floor_amount
+    SEQUENCE createColumnGroupList USING deserved_floors AND floor_amount
     SET TEMPID TO 1
     FOR EACH column in ColumnList
             IF served_floors IS EQUAL TO lowest_possible_floor AND SMALLER THAN 2 THEN 
-                ADD (INSTANTIATE column_group WITH served_floors AND TEMPID AND 1 ) TO ColumnGroupList
+                ADD (INSTANTIATE column_group WITH deserved_floors AND TEMPID AND 1 ) TO ColumnGroupList
             ELSE IF served_floors IS EQUAL TO 1 AND SMALLER THAN 24 THEN 
-                ADD (INSTANTIATE column_group WITH served_floors AND TEMPID AND 2 ) TO ColumnGroupList
+                ADD (INSTANTIATE column_group WITH deserved_floors AND TEMPID AND 2 ) TO ColumnGroupList
             ELSE IF served_floors IS EQUAL TO 24 AND SMALLER THAN 47 THEN 
-                ADD (INSTANTIATE column_group WITH served_floors AND TEMPID AND 3 ) TO ColumnGroupList
+                ADD (INSTANTIATE column_group WITH deserved_floors AND TEMPID AND 3 ) TO ColumnGroupList
             ELSE IF served_floors IS EQUAL TO 47 AND SMALLER THAN 67 THEN SET column_group TO 4
-                ADD (INSTANTIATE column_group WITH served_floors AND TEMPID AND 4 ) TO ColumnGroupList
+                ADD (INSTANTIATE column_group WITH deserved_floors AND TEMPID AND 4 ) TO ColumnGroupList
             ENDIF
     ENDFOR
     ENDSEQUENCE
@@ -188,18 +184,51 @@ ENDDEFINE
 column_amount AND minimum_floor AND maximum_floor AND amount_of_elevator_per_column
 SET battery1 TO INSTANTIATE batery WITH 4, -6, 60, 3
 
+SET deserved_floor OF Column A: B6 TO B1 + RC 
+SET deserved_floor OF Column B: 2 TO 20 + RC 
+SET deserved_floor OF Column C: 21 TO 40 + RC
+SET deserved_floor OF Column D: 41 TO 60 + RC
 
 scenario 1 
+SET elevatorB1 TO moving FROM floor 20 TO floor 5
+SET elevatorB2 TO moving FROM floor 3 TO floor 15
+SET elevatorB3 TO moving FROM floor 13 TO floor 1
+SET elevatorB4 TO moving FROM floor 15 TO floor 2
+SET elevatorB5 TO moving FROM floor 6 TO floor 1
 CALL requestElevator WITH 1 AND up
 CALL requestFloor with 20
+SEND elevatorB5
 
 scenario 2
+SET elevatorC1 TO moving FROM floor 1 TO floor 21
+SET elevatorC2 TO moving FROM floor 23 TO floor 28
+SET elevatorC3 TO moving FROM floor 33 TO floor 1
+SET elevatorC4 TO moving FROM floor 40 TO floor 24
+SET elevatorC5 TO moving FROM floor 39 TO floor 1
 CALL requestElevator WITH 1 AND up
 CALL requestFloor with 36
+SEND elevator C1 
 
 scenario 3
+SET elevatorD1 TO moving FROM floor 58 TO floor 1
+SET elevatorD2 TO moving FROM floor 50 TO floor 60
+SET elevatorD3 TO moving FROM floor 46 TO floor 58
+SET elevatorD4 TO moving FROM floor 1 TO floor 54
+SET elevatorD5 TO moving FROM floor 60 TO floor 1
 CALL requestElevator WITH 54 AND down
 CALL requestFloor with 1
+SEND elevatorD1
+
+scenario 4
+SET elevatorA1 TO idle ON floor -4
+SET elevatorA2 TO idle ON floor 1
+SET elevatorA3 TO moving FROM floor -3 TO floor -5
+SET elevatorA4 TO moving FROM floor -6 TO floor 1
+SET elevatorA5 TO moving FROM floor -1 TO floor -6
+CALL requestElevator WITH -3 AND up
+CALL requestFloor with 1
+SEND elevatorA1
+
 
 
 =================================================================END TESTING SECTION=================================================================================================
