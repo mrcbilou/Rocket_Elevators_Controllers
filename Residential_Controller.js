@@ -1,20 +1,28 @@
 
 class Column {
     constructor(floorAmount, elevatorAmount) {
-        console.log('Column constructor', floorAmount);
+        console.log('Column constructor', "ON");
         this.floorAmount = floorAmount;
         this.elevatorAmount = elevatorAmount;
         this.elevatorList=[];
         this.callButtonList=[];
+        
+        
 
         
+        console.log("NEW ELEVATORS CREATED");
         var i=1;
         while(  i <= elevatorAmount ) {
-            console.log('CREATE AN ELEVATOR', i);
-            let elevator = new Elevator (i, "idle", 2, this.floorAmount);
+
+            let elevator = new Elevator (this.currentFloor, "idle",  this.floorAmount);
             this.elevatorList.push(elevator);
             i = i+1;
         }
+        console.log("ELEVATOR STATUS AND POSITION");
+        console.table(this.elevatorList);
+
+
+        console.log('CALL BUTTON LIST');
         // call Button List
         
         for (var i = 1; i <= this.floorAmount; i++){
@@ -30,17 +38,20 @@ class Column {
             
         }
         console.table(this.callButtonList);
+
+
+
         
     }
 }
 
 class Elevator {
-    constructor (status, currentFloor, floorAmount) {
-        this.status = status;
+    constructor ( currentFloor, currentDirection, floorAmount) {
+        
         this.currentFloor = currentFloor;
         this.floorAmount = floorAmount;
+        this.currentDirection = currentDirection;
         this.floorButtonList=[];
-        
 
         // floor selection button
         console.log("FLOOR SELECTION BUTTON LIST");
@@ -52,8 +63,11 @@ class Elevator {
         console.table(this.floorButtonList);
 
     }
-
+  
+        
 }
+    
+
 
 class CallButton {
     constructor (direction, status){
@@ -75,5 +89,6 @@ class FloorButton {
 }
 
 
-var column1 = new Column(10, 2);
-var elevator1 = new Elevator("Idle", 2, 10);
+var column1 = new Column(10, 2 );
+var elevator1 = new Elevator( 2, "idle", 10);
+var elevator2 = new Elevator( 7, "idle", 10);
