@@ -69,11 +69,11 @@ print(a1.status)
 elevatorList = (q1, q2)
 print(elevatorList)
 
-for floorAmount in range(10):
+for floorAmount in range(9):
     if floorAmount == 0:
         print(CallButton("up","off"))
         print("CallButton","up" , "off")
-    if floorAmount == 9:
+    if floorAmount == 8:
         print(CallButton("down","off"))
         print("CallButton","down" , "off")
     else:
