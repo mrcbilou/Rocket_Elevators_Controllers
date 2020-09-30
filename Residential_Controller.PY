@@ -2,7 +2,9 @@ class Column:
     def __init__(self, floorAmount, elevatorAmount):
      self.floorAmount = floorAmount 
      self.elevatorAmount = elevatorAmount
+     # call button loop to work
 
+    
 
 
 
@@ -14,11 +16,25 @@ class Elevator:
 
 
 
+class CallButton:
+    def __init__(self, direction, status):
+     self.direction = direction
+     self.status = status
+
+
+
+class FloorButton:
+    def __init__(self, floorId, status):
+     self.floorId = floorId
+     self.status = status
 
 
 
 
 
+
+
+# TEST SECTION
 
 print('COLUMN')
 
@@ -37,3 +53,29 @@ q2 = Elevator(7, "idle", 10)
 print(q2.currentFloor)
 print(q2.currentDirection)
 print(q2.floorAmount)
+
+
+print('CALL BUTTON')
+w1 = CallButton('up , down', "off")
+print(w1.direction)
+print(w1.status)
+
+
+print('FLOOR BUTTON')
+a1 = FloorButton('Floor ID', "off")
+print(a1.floorId)
+print(a1.status)
+#print elevaotr list
+elevatorList = (q1, q2)
+print(elevatorList)
+
+for floorAmount in range(10):
+    if floorAmount == 0:
+        print(CallButton("up","off"))
+        print("CallButton","up" , "off")
+    if floorAmount == 9:
+        print(CallButton("down","off"))
+        print("CallButton","down" , "off")
+    else:
+        print(CallButton("up, down","off"))
+        print("CallButton","up, down" , "off")
