@@ -6,21 +6,32 @@ class Column {
         this.elevatorAmount = elevatorAmount;
         this.elevatorList=[];
         this.callButtonList=[];
-        
-        
+        this.requestList=[];
+        this.floorButtonList=[];
 
+        
+        // floor selection button
+        console.log("FLOOR SELECTION BUTTON LIST");
+
+        for(var i = 1; i <= floorAmount; i++){
+            
+            this.floorButtonList.push(new FloorButton (i, "off", 1));
+        }
+        console.table(this.floorButtonList);
         
         console.log("NEW ELEVATORS CREATED");
         var i=1;
         while(  i <= elevatorAmount ) {
 
-            let elevator = new Elevator (this.currentFloor, "idle",  this.floorAmount);
+            let elevator = new Elevator(1, "idle",  this.floorAmount);
             this.elevatorList.push(elevator);
             i = i+1;
         }
         console.log("ELEVATOR STATUS AND POSITION");
         console.table(this.elevatorList);
 
+      
+        
 
         console.log('CALL BUTTON LIST');
         // call Button List
@@ -38,33 +49,72 @@ class Column {
             
         }
         console.table(this.callButtonList);
-
-
+        
 
         
+         
+      /*  for (var request of this.requestList){
+            console.log("request !!!!!!")
+            
+            if (CallButton.status = "on"){
+                this.requestList.push(new Request (direction, status));
+            }
+        }
+            
+        
+        console.table(this.requestList);*/
     }
+
+    findBestElevator(requestedFloor, currentFloor) {
+        
+        
+        for (var elevator of this.elevatorList) {
+            console.log(elevator);
+            
+            if(elevator.currentDirection = "up"){
+
+                    if(currentFloor < requestedFloor){
+                    console.log("YES IT WORKS");
+                    console.log(elevator);
+                    }  
+            }
+            if(elevator.currentDirection = "down"){
+
+                if(currentFloor > requestedFloor){
+                    console.log("OMG IT DOES WORK");
+                    console.log(elevator);
+                    }
+            }
+                return elevator;
+        }
+
+    }
+    
+   /* requestElevator(requestedFloor) {
+        console.log("BRODOG IS THIS WORKING ??");
+        findBestElevator
+        
+        
+
+    }*/
+        
+   
+    
+
+
 }
 
 class Elevator {
-    constructor ( currentFloor, currentDirection, floorAmount) {
-        
+    constructor ( elevatorId, currentFloor, currentDirection, currentStatus) {
+        this.elevatorId = elevatorId;
         this.currentFloor = currentFloor;
-        this.floorAmount = floorAmount;
         this.currentDirection = currentDirection;
-        this.floorButtonList=[];
+        this.currentStatus = currentStatus;
 
-        // floor selection button
-        console.log("FLOOR SELECTION BUTTON LIST");
 
-        for(var i = 1; i <= floorAmount; i++){
-            
-            this.floorButtonList.push(new FloorButton (i, "off", 1));
-        }
-        console.table(this.floorButtonList);
-
+    
     }
-  
-        
+    
 }
     
 
@@ -89,6 +139,42 @@ class FloorButton {
 }
 
 
-var column1 = new Column(10, 2 );
-var elevator1 = new Elevator( 2, "idle", 10);
-var elevator2 = new Elevator( 7, "idle", 10);
+
+//var column1 = new Column(10, 2 );
+//var elevator1 = new Elevator( 2, "idle", 10);
+//var elevator2 = new Elevator( 7, "idle", 10);
+
+//TEST1
+var columnTest1 = new Column(10, 2);
+columnTest1.elevatorList[0].elevatorId = "A";
+columnTest1.elevatorList[0].currentFloor = 2;
+columnTest1.elevatorList[0].currentDirection = 'idle';
+columnTest1.elevatorList[1].elevatorId = "B";
+columnTest1.elevatorList[1].currentFloor = 7;
+columnTest1.elevatorList[1].currentDirection = 'idle';
+columnTest1.findBestElevator(3, "idle");
+
+//columnTest1.requestElevator(3);
+  //TEST2
+
+
+//this.findBestElevator = function(requestedFloor,currentDirection,currentFloor){
+ //   while(elevatorAmount=2){
+    //    if(currentDirection= "up"){
+   //         currentFloor < requestedFloor
+     //   }
+       // if(currentDirection = "down"){
+ //           currentFloor > requestedFloor
+   //     }
+     //   if (currentDirection = "idle"){
+
+       //     if(currentFloor < 5 ){
+         //       return bestElevator;
+           // }
+       //     if(currentFloor > 5 ){
+         //       return bestElevator;
+           // }
+       // }
+   //     return bestElevator;
+    //}
+// 

@@ -2,7 +2,7 @@ class Column:
     def __init__(self, floorAmount, elevatorAmount):
      self.floorAmount = floorAmount 
      self.elevatorAmount = elevatorAmount
-     # call button loop to work
+     
 
     
 
@@ -62,20 +62,30 @@ print(w1.status)
 
 
 print('FLOOR BUTTON')
-a1 = FloorButton('Floor ID', "off")
+a1 = FloorButton('1', "off")
 print(a1.floorId)
 print(a1.status)
+
+
 #print elevaotr list
 elevatorList = (q1, q2)
 print(elevatorList)
 
+# floor button loop
+floorButtonIter = iter(FloorButton)
+for floorAmount in range(9):
+    print(next(floorButtonIter))
+
+# call button loop 
 for floorAmount in range(9):
     if floorAmount == 0:
         print(CallButton("up","off"))
         print("CallButton","up" , "off")
-    if floorAmount == 8:
+    if floorAmount == 9:
         print(CallButton("down","off"))
         print("CallButton","down" , "off")
     else:
         print(CallButton("up, down","off"))
         print("CallButton","up, down" , "off")
+    
+
