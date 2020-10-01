@@ -57,59 +57,71 @@ class Column {
 
         
          
-      /*  for (var request of this.requestList){
-            console.log("request !!!!!!")
-            
-            if (CallButton.status = "on"){
-                this.requestList.push(new Request (direction, status));
-            }
-        }
-            
-        
-        console.table(this.requestList);*/
+      
         console.log(" FINDING BEST ELEVATOR");
     }
-   // gives a best elevator but not the good one
     findBestElevator(currentDirection, requestedFloor) {
         
         let bestElevatorCase = null;
-        var distanceA = Math.abs(this.elevatorList[0].currentFloor - requestedFloor);
-        var distanceB = Math.abs(this.elevatorList[1].currentFloor - requestedFloor);
-        console.log(distanceA);
-        console.log(distanceB);
+        let distance = 0;
+        let bestDistance =99;
+        
         for (var i= 0 ; i < this.elevatorList.length; i++){
-           
             
+            //console.log(distance);
+            //console.log(this.elevatorList[i].currentDirection);
+            //console.log(currentDirection);
             if (currentDirection === "up" && this.elevatorList[i].currentDirection === "up" && this.elevatorList[i].currentFloor <= requestedFloor){
-                bestElevatorCase= this.elevatorList[i];
-            }
-            else if  (currentDirection === "down" && this.elevatorList[i].currentDirection === "down" && this.elevatorList[i].currentFloor >= requestedFloor){
-                bestElevatorCase = this.elevatorList[i];
                 
-            } 
-            else if(currentDirection ==="up" && this.elevatorList[i].currentDirection ==="none" && this.elevatorList[i].currentFloor <= requestedFloor) {
-                bestElevatorCase = this.elevatorList[i];
+                    distance = Math.abs(this.elevatorList[i].currentFloor - requestedFloor);
+                
+                if(distance < bestDistance){
+                    bestDistance= distance;
+                    bestElevatorCase= this.elevatorList[i]; 
+                }  
             }
-            else if(currentDirection ==="down" && this.elevatorList[i].currentDirection ==="none" && this.elevatorList[i].currentFloor >= requestedFloor) {
-                bestElevatorCase = this.elevatorList[i];
+            else if (currentDirection === "down" && this.elevatorList[i].currentDirection === "down" && this.elevatorList[i].currentFloor >= requestedFloor){
+                    distance = Math.abs(this.elevatorList[i].currentFloor - requestedFloor); 
+                if(distance < bestDistance){
+                    bestDistance= distance;
+                    bestElevatorCase= this.elevatorList[i]; 
+                } 
             }
-            else if(currentDirection ==="up" && this.elevatorList[i].currentDirection ==="none" && this.elevatorList[i].currentFloor >= distanceA) {
-                bestElevatorCase = this.elevatorList[i];
-            }
-            else if(currentDirection ==="down" && this.elevatorList[i].currentDirection ==="none" && this.elevatorList[i].currentFloor <= distanceA) {
-                bestElevatorCase = this.elevatorList[i];
-            }
-            
-          
-            var bestElevator = bestElevatorCase;
-            
         }
-        
-        console.log(bestElevator);
-        return bestElevator;
-        
+        if(bestElevatorCase != null){
+                // calls a function that triggers when the best elvator is found
+                console.log("COLUMN FOUND AN ELEVATOR")
+                console.log(bestElevatorCase);
+                bestElevatorCase.moveELevator(requestedFloor);
+                
+        }
+        else {
+            for (var j= 0 ; j < this.elevatorList.length; j++){
+                if (this.elevatorList[j].currentDirection ==="none") {
+                    distance = Math.abs(this.elevatorList[j].currentFloor - requestedFloor);
+                    if(distance < bestDistance){
+                        bestDistance= distance;
+                        bestElevatorCase= this.elevatorList[j]; 
+                    }
+                }
+            }
+            if (bestElevatorCase != null) {
+                console.log("COLUMN FOUND the correct AN ELEVATOR")
+                console.log(bestElevatorCase);
+                bestElevatorCase.moveELevator(requestedFloor);
+                // bestElevatorCase is an Elevator
+                // calls a function that triggers when the best elvator is found
+            }
+        }
     }
-    
+   
+            
+        requestElevator(requestedFloor, currentDirection){
+         this.findBestElevator(currentDirection, requestedFloor);
+         console.log(this.bestElevatorCase);
+         return this.bestElevatorCase;   
+        }
+
         
             
         
@@ -118,30 +130,36 @@ class Column {
                 
         
             
+
+
 }
 
-
-
 class Elevator {
-    constructor ( elevatorId, currentFloor, currentDirection, currentStatus,requestedFloor,floorAmount ) {
+    constructor ( elevatorId, currentFloor, currentDirection, currentStatus ) {
         this.elevatorId = elevatorId;
         this.currentFloor = currentFloor;
         this.currentDirection = currentDirection;
         this.currentStatus = currentStatus;
-        this.requestedFloor =requestedFloor;
-        this.floorAmount = floorAmount;
         
+        this.requestList = [];
 
+        
+        for(var i = 0; i <= this.requestedFloor; i++){
+            this.requestList.push(new Request ( i,"received"));
+        }
+        console.log("REQUEST LIST");
+        console.table(this.requestList);
     }
-    /*moveElevator(currentFloor,currentDirection,requestedFloor,floorAmount) {
-      for (for var)      
-    }*/
+    moveELevator(targetFloor){
+        this.currentFloor = targetFloor;
+        console.log("ELEVATOR IS GOING TO FLOOR " + this.currentFloor );
+
+    }     
+    
+
+    
+
 }
-    
-
-    
-
-
 class CallButton {
     constructor (direction, status,floorId){
         this.direction = direction;
@@ -150,15 +168,25 @@ class CallButton {
         
         
     }
-
+    
 }
 
 class FloorButton {
-    constructor (floorid, status){
+    constructor (floorid, status,requestedFloor){
         this.status=status;
         this.floorid= floorid;
+        this.requestedFloor = requestedFloor;
     }
 
+    
+
+}
+
+class Request {
+    constructor (floorId,status){
+    this.floorId= floorId
+    this.status =status
+}
 }
 
 
@@ -172,39 +200,30 @@ var columnTest1 = new Column(10, 2);
 columnTest1.elevatorList[0].elevatorId = "A";
 columnTest1.elevatorList[0].currentFloor = 2;
 columnTest1.elevatorList[0].currentDirection = 'none';
-columnTest1.elevatorList[0].currentStatus = 'idle';
-columnTest1.elevatorList[0].floorAmount = 10;
+columnTest1.elevatorList[0].currentStatus = 'none';
+
 columnTest1.elevatorList[1].elevatorId = "B";
-columnTest1.elevatorList[1].currentFloor = 1;
+columnTest1.elevatorList[1].currentFloor = 6;
 columnTest1.elevatorList[1].currentDirection = 'none';
-columnTest1.elevatorList[1].currentStatus = 'idle';
-columnTest1.elevatorList[0].floorAmount = 10;
+columnTest1.elevatorList[1].currentStatus = 'none';
+
+columnTest1.callButtonList[5].direction="on";
+columnTest1.callButtonList[5].status="up";
 
 columnTest1.findBestElevator("up",3);
+columnTest1.requestElevator("up",3);
 
 
 
-//columnTest1.requestElevator(3);
-  //TEST2
+//TEST2
+/*var columnTest1 = new Column(10, 2);
+columnTest1.elevatorList[0].elevatorId = "A";
+columnTest1.elevatorList[0].currentFloor = 10;
+columnTest1.elevatorList[0].currentDirection = 'none';
+columnTest1.elevatorList[0].currentStatus = 'none';
 
-
-//this.findBestElevator = function(requestedFloor,currentDirection,currentFloor){
- //   while(elevatorAmount=2){
-    //    if(currentDirection= "up"){
-   //         currentFloor < requestedFloor
-     //   }
-       // if(currentDirection = "down"){
- //           currentFloor > requestedFloor
-   //     }
-     //   if (currentDirection = "idle"){
-
-       //     if(currentFloor < 5 ){
-         //       return bestElevator;
-           // }
-       //     if(currentFloor > 5 ){
-         //       return bestElevator;
-           // }
-       // }
-   //     return bestElevator;
-    //}
-// 
+columnTest1.elevatorList[1].elevatorId = "B";
+columnTest1.elevatorList[1].currentFloor = 3;
+columnTest1.elevatorList[1].currentDirection = 'none';
+columnTest1.elevatorList[1].currentStatus = 'none';
+columnTest1.findBestElevator("up",1);*/
