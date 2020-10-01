@@ -111,11 +111,14 @@ class Column {
                 // calls a function that triggers when the best elvator is found
             }
         }
+        return bestElevatorCase;
     }
-    RequestFloor(bestElevatorCase, RequestedFloor){
-        bestElevatorCase.push.elevatorList[0];
-        this.elevatorList[0].moveELevator(RequestedFloor);
-        console.log("A FLOOR HAS BEEN REQUESTED ... \n MOVING TO FLOOR: " + RequestedFloor);
+
+    
+
+    RequestFloor (Elevator ,RequestedFloor){
+        columnTest1.elevatorList[Elevator].moveELevator(RequestedFloor);
+        console.log(" FLOOR SELECTED... \n  MOVING TO FLOOR: " + RequestedFloor);
     }
 
 }
@@ -127,18 +130,18 @@ class Elevator {
         this.Direction = Direction;
         this.currentStatus = currentStatus;
         
-        this.requestList = [];
+        //this.requestList = [];
 
         
-        for(var i = 0; i <= this.RequestedFloor; i++){
+        /*for(var i = 0; i <= this.RequestedFloor; i++){
             this.requestList.push(new Request ( i,"received"));
         }
         console.log("REQUEST LIST");
-        console.table(this.requestList);
+        console.table(this.requestList);*/
     }
     moveELevator(targetFloor){
         this.currentFloor = targetFloor;
-        console.log("ELEVATOR IS PICKING SOMEONE UP AT " + this.currentFloor);
+        
     }     
     
 
@@ -197,7 +200,8 @@ columnTest1.callButtonList[5].status="up";
 
 
 columnTest1.RequestElevator(3,"up");
-columnTest1.RequestFloor(0, 7)
+console.log("ELEVATOR IS PICKING SOMEONE UP AT " + columnTest1.elevatorList[0].currentFloor  );
+columnTest1.RequestFloor(0,7);
 
 
 //TEST2
