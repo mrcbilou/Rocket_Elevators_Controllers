@@ -20,6 +20,7 @@ class Column {
         }
         console.table(this.floorButtonList);
         
+        
         console.log("NEW ELEVATORS CREATED");
         var i=1;
         while(  i <= elevatorAmount ) {
@@ -98,12 +99,7 @@ class Column {
             else if(currentDirection ==="down" && this.elevatorList[i].currentDirection ==="none" && this.elevatorList[i].currentFloor <= distanceA) {
                 bestElevatorCase = this.elevatorList[i];
             }
-            else if(currentDirection ==="up" && this.elevatorList[i].currentDirection ==="none" && this.elevatorList[i].currentFloor >= distanceB) {
-                bestElevatorCase = this.elevatorList[i];
-            }
-            else if(currentDirection ==="down" && this.elevatorList[i].currentDirection ==="none" && this.elevatorList[i].currentFloor <= distanceB) {
-                bestElevatorCase = this.elevatorList[i];
-            }
+            
           
             var bestElevator = bestElevatorCase;
             
@@ -127,19 +123,22 @@ class Column {
 
 
 class Elevator {
-    constructor ( elevatorId, currentFloor, currentDirection, currentStatus, ) {
+    constructor ( elevatorId, currentFloor, currentDirection, currentStatus,requestedFloor,floorAmount ) {
         this.elevatorId = elevatorId;
         this.currentFloor = currentFloor;
         this.currentDirection = currentDirection;
         this.currentStatus = currentStatus;
+        this.requestedFloor =requestedFloor;
+        this.floorAmount = floorAmount;
         
-       
-        
-    
-    
+
     }
-    
+    /*moveElevator(currentFloor,currentDirection,requestedFloor,floorAmount) {
+      for (for var)      
+    }*/
 }
+    
+
     
 
 
@@ -174,11 +173,12 @@ columnTest1.elevatorList[0].elevatorId = "A";
 columnTest1.elevatorList[0].currentFloor = 2;
 columnTest1.elevatorList[0].currentDirection = 'none';
 columnTest1.elevatorList[0].currentStatus = 'idle';
-
+columnTest1.elevatorList[0].floorAmount = 10;
 columnTest1.elevatorList[1].elevatorId = "B";
 columnTest1.elevatorList[1].currentFloor = 1;
 columnTest1.elevatorList[1].currentDirection = 'none';
 columnTest1.elevatorList[1].currentStatus = 'idle';
+columnTest1.elevatorList[0].floorAmount = 10;
 
 columnTest1.findBestElevator("up",3);
 
