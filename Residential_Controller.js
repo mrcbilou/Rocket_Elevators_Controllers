@@ -200,7 +200,7 @@ columnTest1.callButtonList[5].status="up";
 
 
 columnTest1.RequestElevator(3,"up");
-console.log("ELEVATOR IS PICKING SOMEONE UP AT " + columnTest1.elevatorList[0].currentFloor  );
+console.log("ELEVATOR IS PICKING SOMEONE UP AT FLOOR " + columnTest1.elevatorList[0].currentFloor  );
 columnTest1.RequestFloor(0,7);
 
 
