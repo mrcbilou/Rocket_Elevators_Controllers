@@ -8,6 +8,7 @@ class Column {
         this.callButtonList=[];
         this.requestList=[];
         this.floorButtonList=[];
+       
 
         
         // floor selection button
@@ -30,6 +31,8 @@ class Column {
         console.log("ELEVATOR STATUS AND POSITION");
         console.table(this.elevatorList);
 
+
+ 
       
         
 
@@ -63,55 +66,57 @@ class Column {
             
         
         console.table(this.requestList);*/
+        console.log(" FINDING BEST ELEVATOR");
     }
-
-    findBestElevator(requestedFloor, currentFloor) {
+   // gives a best elevator but not the good one
+    findBestElevator(currentDirection, requestedFloor) {
         
         
-        for (var elevator of this.elevatorList) {
-            console.log(elevator);
-            
-            if(elevator.currentDirection = "up"){
+        for (var i= 0 ; i < this.elevatorList.length; i++){
+            var smallestDistance = Math.abs(this.elevatorList[i].currentFloor - requestedFloor);
+            console.log(smallestDistance);
 
-                    if(currentFloor < requestedFloor){
-                    console.log("YES IT WORKS");
-                    console.log(elevator);
-                    }  
+            if (currentDirection === "up" && this.elevatorList[i].currentDirection === "up" && this.elevatorList[i].currentFloor <= requestedFloor){
+                var bestElevator= this.elevatorList[i].elevatorId;
             }
-            if(elevator.currentDirection = "down"){
+            if  (currentDirection === "down" && this.elevatorList[i].currentDirection === "down" && this.elevatorList[i].currentFloor >= requestedFloor){
+                var bestElevator = this.elevatorList[i].elevatorId;
+                
+            } 
+            //else if(currentDirection ==="none" ) {
 
-                if(currentFloor > requestedFloor){
-                    console.log("OMG IT DOES WORK");
-                    console.log(elevator);
-                    }
-            }
-                return elevator;
+            //}
+            console.log(bestElevator);
+            return bestElevator;
         }
-
+           
+        
+        
+        
     }
     
-   /* requestElevator(requestedFloor) {
-        console.log("BRODOG IS THIS WORKING ??");
-        findBestElevator
+        
+            
         
         
-
-    }*/
+            
+                
         
-   
-    
-
-
+            
 }
 
+
+
 class Elevator {
-    constructor ( elevatorId, currentFloor, currentDirection, currentStatus) {
+    constructor ( elevatorId, currentFloor, currentDirection, currentStatus, requestedFloor) {
         this.elevatorId = elevatorId;
         this.currentFloor = currentFloor;
         this.currentDirection = currentDirection;
         this.currentStatus = currentStatus;
-
-
+        this.requestedFloor = requestedFloor
+       
+        
+    
     
     }
     
@@ -148,11 +153,17 @@ class FloorButton {
 var columnTest1 = new Column(10, 2);
 columnTest1.elevatorList[0].elevatorId = "A";
 columnTest1.elevatorList[0].currentFloor = 2;
-columnTest1.elevatorList[0].currentDirection = 'idle';
+columnTest1.elevatorList[0].currentDirection = 'none';
+columnTest1.elevatorList[0].currentStatus = 'idle';
+
 columnTest1.elevatorList[1].elevatorId = "B";
 columnTest1.elevatorList[1].currentFloor = 7;
-columnTest1.elevatorList[1].currentDirection = 'idle';
-columnTest1.findBestElevator(3, "idle");
+columnTest1.elevatorList[1].currentDirection = 'none';
+columnTest1.elevatorList[1].currentStatus = 'idle';
+
+columnTest1.findBestElevator("up",3);
+
+
 
 //columnTest1.requestElevator(3);
   //TEST2
