@@ -1,14 +1,111 @@
-For The Residential_Controller.js
+----------------------------------------------For The Residential_Controller.js------------------------------------------------------------------
+
+
+
+First you must install The Code Runner extension in VSC.
+Then in the  .js file you need to open the console and select to the output tab (all inside Visual Studio Code).
+You can do that by clicking the danger and warning icons in the bottom left in the blue navbar.
+In the top right corner of the editor window there is a play button. If you click said button the code will run and you should see something like this:
+
+Column constructor ON        <============ stands for the recognition of the creation of a columm
+FLOOR SELECTION BUTTON LIST   <====================== stands for all the listed information of all the floor buttons and their specifications
+┌─────────┬────────┬─────────┬────────────────┐
+│ (index) │ status │ floorid │ RequestedFloor │
+├─────────┼────────┼─────────┼────────────────┤
+│    0    │ 'off'  │    1    │       1        │
+│    1    │ 'off'  │    2    │       1        │
+│    2    │ 'off'  │    3    │       1        │
+│    3    │ 'off'  │    4    │       1        │
+│    4    │ 'off'  │    5    │       1        │
+│    5    │ 'off'  │    6    │       1        │
+│    6    │ 'off'  │    7    │       1        │
+│    7    │ 'off'  │    8    │       1        │
+│    8    │ 'off'  │    9    │       1        │
+│    9    │ 'off'  │   10    │       1        │
+└─────────┴────────┴─────────┴────────────────┘
+NEW ELEVATORS CREATED        <====================== stands for the recognition of the creation of an elevator
+ELEVATOR STATUS AND POSITION        <====================== stands for all the listed information of all the elevators and their specifications
+┌─────────┬────────────┬──────────────┬───────────┬───────────────┐
+│ (index) │ elevatorId │ currentFloor │ Direction │ currentStatus │
+├─────────┼────────────┼──────────────┼───────────┼───────────────┤
+│    0    │     1      │      1       │  'none'   │    'idle'     │
+│    1    │     2      │      1       │  'none'   │    'idle'     │
+└─────────┴────────────┴──────────────┴───────────┴───────────────┘
+CALL BUTTON LIST       <====================== stands for all the listed information of all the call buttons and their specifications
+┌─────────┬───────────┬────────┬─────────┐
+│ (index) │ direction │ status │ floorId │
+├─────────┼───────────┼────────┼─────────┤
+│    0    │   'up'    │ 'off'  │    0    │
+│    1    │   'up'    │ 'off'  │    1    │
+│    2    │  'down'   │ 'off'  │    1    │
+│    3    │   'up'    │ 'off'  │    2    │
+│    4    │  'down'   │ 'off'  │    2    │
+│    5    │   'up'    │ 'off'  │    3    │
+│    6    │  'down'   │ 'off'  │    3    │
+│    7    │   'up'    │ 'off'  │    4    │
+│    8    │  'down'   │ 'off'  │    4    │
+│    9    │   'up'    │ 'off'  │    5    │
+│   10    │  'down'   │ 'off'  │    5    │
+│   11    │   'up'    │ 'off'  │    6    │
+│   12    │  'down'   │ 'off'  │    6    │
+│   13    │   'up'    │ 'off'  │    7    │
+│   14    │  'down'   │ 'off'  │    7    │
+│   15    │   'up'    │ 'off'  │    8    │
+│   16    │  'down'   │ 'off'  │    8    │
+│   17    │   'up'    │ 'off'  │    9    │
+│   18    │  'down'   │ 'off'  │    9    │
+│   19    │  'down'   │ 'off'  │   10    │
+└─────────┴───────────┴────────┴─────────┘
+
+SCENARIO 1  <====================== stands for the current scenario that the program is running 
+COLUMN FOUND the correct  ELEVATOR   <====================== stands for the best elevator that the column has found
+Elevator {   <========================== The best elevator and all its specifications
+  elevatorId: 'A',
+  currentFloor: 2,
+  Direction: 'none',
+  currentStatus: 'none'
+}
+ELEVATOR IS PICKING SOMEONE UP AT FLOOR 3 OPENING DOORS .....  <======== The elevator has moved and reached the RequestedFloor and has opened its doors
+ CLOSING DOORS .....  <==================   The elevator is leaving the RequestedFloor and has closed its doors
+ FLOOR SELECTED...      <==================   The User has selected his destination Floor
+  MOVING TO FLOOR: 7  <==================   The Elevator is moving to the floor requested by the User
+ ELEVATOR STOPPED   <==================   The Elevator has arrived to the floor requested by the User
+ OPENING DOORS..... <======== The elevator has moved and reached the RequestedFloor and has opened its doors
+ CLOSING DOORS....   <==================   The elevator is leaving the RequestedFloor and has closed its doors
+
+***** NOTE ******
+
+ON the click of the play button, ALL 3 SCENARIOS WILL BE RAN SIMULTANEOUSLY , 
+therefore you need to scroll down in the output console to see all 3 scenarios.
 
 
 
 
 
+----------------------------------------------For Residential_Controller.py---------------------------------------------------------
 
+First you must install The Code Runner extension in VSC.
+Then in the  .py file you need to open the console and select to the output tab (all inside Visual Studio Code).
+You can do that by clicking the danger and warning icons in the bottom left in the blue navbar.
+In the top right corner of the editor window there is a play button. If you click said button the code will run and you should see something like this:
 
+---------------SCENARIO 1 ------------------                 <============== THE current SCENARIO that is ran by the program
+Floor Amount : 10 | Elevator Amount 2                           <===================  The specification of the created Column
+FINDING THE BEST ELEVATOR                                   <====================== the program is looking for the best column
+BEST ELEVATOR FOUND                                          <====================== says that  the best elevator in the column has been  found
+1                                                           <======================   THE ID of the ELEVATOR  (1 = A  ; 2 = B)
+REQUEST ACCEPTED PICKING SOMEONE UP AT FLOOR                 <======== The elevator is moving towards the floor requested by the User
+3                                                             <============================= The Floor requested by the User
+ELEVATOR STOPPED AT FLOOR  3                         <================ The elevator has arrived to the Requested Floor and has STOPPED
+ OPENING DOORS....                              <================ The elevator has arrived to the Requested Floor and is opening the DOORS
+ CLOSING DOORS....                                  <================ The elevator has arrived to the Requested Floor and is CLOSING the DOORS
+FLOOR SELECTED...     MOVING SOMEONE TO FLOOR           <==================   The User has selected his destination Floor and The Elevator is moving to the floor requested by the User
+7                                                       <======================== The floor requested by the User
+ELEVATOR STOPPED AT FLOOR  7                                 <================ The elevator has arrived to the Requested Floor and has STOPPED
+ OPENING DOORS....                                          <================ The elevator has arrived to the Requested Floor and is opening the DOORS
+ CLOSING DOORS....                               <================ The elevator has arrived to the Requested Floor and is CLOSING the DOORS
 
+***** NOTE ******
 
-
-For Residential_Controller.py
-
-
+ON the click of the play button, ALL 3 SCENARIOS WILL BE RAN SIMULTANEOUSLY , 
+therefore you need to scroll down in the output console to see all 3 scenarios.
