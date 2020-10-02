@@ -104,7 +104,7 @@ class Column {
                 }
             }
             if (bestElevatorCase != null) {
-                console.log("COLUMN FOUND the correct AN ELEVATOR")
+                console.log("COLUMN FOUND the correct  ELEVATOR")
                 console.log(bestElevatorCase);
                 bestElevatorCase.moveELevator(RequestedFloor);
                 // bestElevatorCase is an Elevator
@@ -183,7 +183,8 @@ class Request {
 //var elevator1 = new Elevator( 2, "idle", 10);
 //var elevator2 = new Elevator( 7, "idle", 10);
 
-//TEST1
+//SCENARIO 1
+
 var columnTest1 = new Column(10, 2);
 columnTest1.elevatorList[0].elevatorId = "A";
 columnTest1.elevatorList[0].currentFloor = 2;
@@ -198,21 +199,51 @@ columnTest1.elevatorList[1].currentStatus = 'none';
 columnTest1.callButtonList[5].direction="on";
 columnTest1.callButtonList[5].status="up";
 
-
+console.log("SCENARIO 1");
 columnTest1.RequestElevator(3,"up");
 console.log("ELEVATOR IS PICKING SOMEONE UP AT FLOOR " + columnTest1.elevatorList[0].currentFloor  );
 columnTest1.RequestFloor(0,7);
 
 
-//TEST2
-/*var columnTest1 = new Column(10, 2);
-columnTest1.elevatorList[0].elevatorId = "A";
-columnTest1.elevatorList[0].currentFloor = 10;
-columnTest1.elevatorList[0].Direction = 'none';
-columnTest1.elevatorList[0].currentStatus = 'none';
+//SCENARIO 2
 
-columnTest1.elevatorList[1].elevatorId = "B";
-columnTest1.elevatorList[1].currentFloor = 3;
-columnTest1.elevatorList[1].Direction = 'none';
-columnTest1.elevatorList[1].currentStatus = 'none';
-columnTest1.findBestElevator("up",1);*/
+
+var columnTest2 = new Column(10, 2);
+columnTest2.elevatorList[0].elevatorId = "A";
+columnTest2.elevatorList[0].currentFloor = 10;
+columnTest2.elevatorList[0].Direction = 'none';
+columnTest2.elevatorList[0].currentStatus = 'none';
+columnTest2.elevatorList[1].elevatorId = "B";
+columnTest2.elevatorList[1].currentFloor = 3;
+columnTest2.elevatorList[1].Direction = 'none';
+columnTest2.elevatorList[1].currentStatus = 'none';
+console.log("SCENARIO 2");
+columnTest2.RequestElevator(1,"up");
+console.log("ELEVATOR IS PICKING SOMEONE UP AT FLOOR " + columnTest2.elevatorList[1].currentFloor  );
+columnTest2.RequestElevator(3,"up");
+console.log("ELEVATOR IS PICKING SOMEONE UP AT FLOOR " + columnTest2.elevatorList[1].currentFloor  );
+columnTest2.RequestFloor(0,5);
+columnTest2.RequestFloor(0,6);
+columnTest2.RequestElevator(9,"down");
+console.log("ELEVATOR IS PICKING SOMEONE UP AT FLOOR " + columnTest2.elevatorList[0].currentFloor  );
+columnTest2.RequestFloor(1,2);
+
+// SCENARIO 3
+
+var columnTest3 = new Column(10, 2);
+columnTest3.elevatorList[0].elevatorId = "A";
+columnTest3.elevatorList[0].currentFloor = 10;
+columnTest3.elevatorList[0].Direction = 'none';
+columnTest3.elevatorList[0].currentStatus = 'none';
+columnTest3.elevatorList[1].elevatorId = "B";
+columnTest3.elevatorList[1].currentFloor = 6;
+columnTest3.elevatorList[1].Direction = 'up';
+columnTest3.elevatorList[1].currentStatus = 'moving';
+console.log("SCENARIO 3");
+columnTest3.RequestElevator(3,"down");
+columnTest3.RequestFloor(0,2);
+console.log("ELEVATOR IS PICKING SOMEONE UP AT FLOOR " + columnTest2.elevatorList[0].currentFloor  );
+
+console.log("ELEVATOR IS PICKING SOMEONE UP AT FLOOR " + columnTest2.elevatorList[1].currentFloor  );
+columnTest3.RequestElevator(10,"down");
+columnTest3.RequestFloor(1,3);
