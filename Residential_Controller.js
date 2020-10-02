@@ -6,7 +6,6 @@ class Column {
         this.elevatorAmount = elevatorAmount;
         this.elevatorList=[];
         this.callButtonList=[];
-        this.requestList=[];
         this.floorButtonList=[];
        
 
@@ -60,7 +59,7 @@ class Column {
       
         console.log(" FINDING BEST ELEVATOR");
     }
-    RequestElevator(RequestedFloor, Direction, status) {
+    RequestElevator(RequestedFloor, Direction) {
         
         let bestElevatorCase = null;
         let distance = 0;
@@ -68,9 +67,7 @@ class Column {
         
         for (var i= 0 ; i < this.elevatorList.length; i++){
             
-            //console.log(distance);
-            //console.log(this.elevatorList[i].Direction);
-            //console.log(Direction);
+            
             if (Direction === "up" && this.elevatorList[i].Direction === "up" && this.elevatorList[i].currentFloor <= RequestedFloor){
                     distance = Math.abs(this.elevatorList[i].currentFloor - RequestedFloor);
                 
@@ -132,15 +129,8 @@ class Elevator {
         this.Direction = Direction;
         this.currentStatus = currentStatus;
         
-        //this.requestList = [];
-
-        
-        /*for(var i = 0; i <= this.RequestedFloor; i++){
-            this.requestList.push(new Request ( i,"received"));
-        }
-        console.log("REQUEST LIST");
-        console.table(this.requestList);*/
     }
+
     moveELevator(targetFloor){
         this.currentFloor = targetFloor;
         
@@ -172,18 +162,11 @@ class FloorButton {
 
 }
 
-class Request {
-    constructor (floorId,status){
-    this.floorId= floorId
-    this.status =status
-}
-}
 
 
 
-//var column1 = new Column(10, 2 );
-//var elevator1 = new Elevator( 2, "idle", 10);
-//var elevator2 = new Elevator( 7, "idle", 10);
+
+// ====================================TEST SECTION===========================================
 
 //SCENARIO 1
 
@@ -198,8 +181,7 @@ columnTest1.elevatorList[1].currentFloor = 6;
 columnTest1.elevatorList[1].Direction = 'none';
 columnTest1.elevatorList[1].currentStatus = 'none';
 
-columnTest1.callButtonList[5].direction="on";
-columnTest1.callButtonList[5].status="up";
+
 
 console.log("SCENARIO 1");
 columnTest1.RequestElevator(3,"up");

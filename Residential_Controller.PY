@@ -32,17 +32,17 @@ class Column:
         # print(self.floorButtonList)
 
         for floor in range(len(self.floorList)):
-            #print("UN bon Burdog")
+            
             if floor == 0: 
-                #print('les jumelles mc cormick')
+                
                 callButton = CallButton ('up', 'off')
                 self.callButtonList.append(callButton)
             elif floor == 9:
-                #print('le commandant picard')
+                
                 callButton = CallButton ('down', 'off')
                 self.callButtonList.append(callButton)
             else:
-                #print('une grenade avec sa')
+                
                 callButton = CallButton ('up , down', 'off')
                 self.callButtonList.append(callButton)
 
@@ -131,7 +131,7 @@ class Floor:
 
 
 
-# TEST SECTION
+# ==========================================================TEST SECTION=================================================
 
 #print('COLUMN')
 print('---------------SCENARIO 1 ------------------')
@@ -186,23 +186,6 @@ columntTest3.RequestFloor(requestTest3, 3)
 
 
 
-''' q1 = Elevator(2, "idle", 'A')
-print(q1.currentFloor)
-print(q1.currentDirection) '''
 
-
-""" floor = Floor(1)
-floorButton = FloorButton (1,'off') """
-
-''' print('CALL BUTTON')
-w1 = CallButton('up , down', "off")
-print(w1.direction)
-print(w1.status) '''
-
-
-''' print('FLOOR BUTTON')
-a1 = FloorButton('1', "off")
-print(a1.floorId)
-print(a1.status) '''
 
 
