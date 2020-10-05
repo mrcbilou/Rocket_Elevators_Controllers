@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "rocket_elevators_controllers/1.0.0": {
+        "runtime": {
+          "rocket_elevators_controllers.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "rocket_elevators_controllers/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

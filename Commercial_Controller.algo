@@ -3,6 +3,8 @@
 DEFINE Battery USING id AND column_amount AND floor_amount and floor_group_list AND amount_of_elevator_per_column AND battery_lowest_floor
     ID: id,
     Status: online, 
+
+    
     ColumnList: SET to empty List
     SEQUENCE createColumnList USING column_amount AND amount_of_elevator_per_column
         SET iterator TO 1
