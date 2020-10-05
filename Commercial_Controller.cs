@@ -3,31 +3,8 @@ using System.Collections.Generic;
 
 namespace Rocket_Elevator_Commercial_Controller
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-            Battery battery = new Battery(4, 66, 5, -6, 60);
-
-            foreach (Column col in battery.columnList) {
-                Console.WriteLine("Column Instanced : {0} ",col.id);
-                    foreach (Elevator elevator in col.elevatorList){
-                        Console.WriteLine("ELEVATOR Instanced Status : {0} ", elevator.status);  
-                    }
-            }
-            Console.WriteLine("Call Button ID AND STATUS");
-            foreach (CallButton call_button in battery.callbuttonList){
-                
-                Console.WriteLine("{0},{1}",call_button.call_button_id,call_button.call_button_status);
-                
-            }
-            
-            //battery.columnList[0].findBestElevator("g", 5, 5);
-        }
-    }
-
-    class Battery
+    
+    public class Battery
     {
         // member variables
         int column_amount;
@@ -37,10 +14,7 @@ namespace Rocket_Elevator_Commercial_Controller
         int battery_maximum_floor;
         public List<Column> columnList = new List<Column>();
         public List<CallButton> callbuttonList = new List<CallButton>();
-       
-       
-
-
+    
         public Battery(int _column_amount, int _floor_amount, int _amount_of_elevator_per_column, int _battery_lowest_floor, int _battery_maximum_floor )
         {
             column_amount = _column_amount;
@@ -69,7 +43,7 @@ namespace Rocket_Elevator_Commercial_Controller
                 }
             }
 
-           // columnList[0].findBestElevator("fgg", 6, 34);
+        // columnList[0].findBestElevator("fgg", 6, 34);
         }
         public void requestElevator()
         {
@@ -78,7 +52,7 @@ namespace Rocket_Elevator_Commercial_Controller
 
     }
 
-    class Column
+    public class Column
     {
         public int id;
         public int floor_amount;
@@ -87,6 +61,8 @@ namespace Rocket_Elevator_Commercial_Controller
         public int amount_of_elevator_per_column;
         public List<Elevator> elevatorList = new List<Elevator>();
         public List<FloorIndicator> floorIndicatorList = new List<FloorIndicator>();
+        public Elevator bestElevatorCase = null;
+        
         public Column (int _floor_amount, int _minimum_floor, int _maximum_floor, int _id ,int _amount_of_elevator_per_column) {
             id = _id;
             floor_amount = _floor_amount;
@@ -94,7 +70,7 @@ namespace Rocket_Elevator_Commercial_Controller
             maximum_floor = _maximum_floor;
             amount_of_elevator_per_column =_amount_of_elevator_per_column;
             
-             // create elevator list
+            // create elevator list
             for(int i = 1; i<= amount_of_elevator_per_column; i++){
                 Elevator elevator = new Elevator (i,"on",1,"none");
                 elevatorList.Add(elevator);
@@ -105,18 +81,72 @@ namespace Rocket_Elevator_Commercial_Controller
                 floorIndicatorList.Add(floor_indicator);
             }
 
-          // findBestElevator();
+        // findBestElevator();
         }
 
 
-        public void findBestElevator(string i, int y, int z)
+        public void findBestElevator(int _requested_floor, string _current_direction, int _elevator_current_floor)
         {
+            int distance = 0;
+            int bestDistance = 99;
 
+            foreach (Elevator elevator in elevatorList)
+            {
+                if (_current_direction == "up" && _requested_floor <= _elevator_current_floor)
+                {
+                    distance = Math.Abs(_elevator_current_floor - _requested_floor);
+
+                    if (distance < bestDistance)
+                    {
+                        bestDistance = distance;
+                        bestElevatorCase = elevator;
+                    }
+                }
+                
+                else if (_current_direction == "down" && _requested_floor >= _elevator_current_floor)
+                {
+                    distance = Math.Abs(_elevator_current_floor - _requested_floor);
+
+                    if (distance < bestDistance)
+                    {
+                        bestDistance = distance;
+                        bestElevatorCase = elevator;
+                    }   
+                }
+            }
+
+            if (bestElevatorCase != null)
+            {
+                Console.WriteLine("COLUMN FOUND AN ELEVATOR");
+                Console.WriteLine(bestElevatorCase);
+            }
+
+            else 
+            {
+                foreach (Elevator elevator in elevatorList)
+                {
+                    if(_current_direction == "none")
+                    {
+                        distance = Math.Abs(_elevator_current_floor - _requested_floor);
+                        
+                        if (distance < bestDistance)
+                        {
+                            bestDistance = distance;
+                            bestElevatorCase = elevator ;
+                        }
+                    }
+                }
+
+                if (bestElevatorCase != null)
+                {
+                    Console.WriteLine("COLUMN FOUND AN ELEVATOR");
+                    Console.WriteLine(bestElevatorCase);
+                }
+            }
         }
-
     }
 
-     class Elevator
+    public class Elevator
     {
         public string status;
         public int current_floor;
@@ -129,9 +159,6 @@ namespace Rocket_Elevator_Commercial_Controller
             status= _elevator_status;
             current_floor = _elevator_current_floor;
             direction= _elevator_direction;
-
-           
-        
         }
         public void CreateRequestList()
         {
@@ -149,7 +176,7 @@ namespace Rocket_Elevator_Commercial_Controller
         }
     }
 
-    class CallButton {
+    public class CallButton {
         public string call_button_status = "off";
         public int call_button_id;
         
@@ -157,33 +184,59 @@ namespace Rocket_Elevator_Commercial_Controller
             call_button_status = _call_button_status;
             call_button_id = _call_button_id;
         }
-      
+    
 
     }
 
-    class RequestFloorButton{
+    public class RequestFloorButton
+    {
         public string request_floor_button_status ="off";
         public int request_floor_button_id;
 
-        public RequestFloorButton(string _request_floor_button_status, int _request_floor_button_id){
+        public RequestFloorButton(string _request_floor_button_status, int _request_floor_button_id)
+        {
             request_floor_button_status = _request_floor_button_status;
             request_floor_button_id = _request_floor_button_id;
         }
     }
 
-    class FloorIndicator{
+    public class FloorIndicator
+    {
         public int elevator_current_floor;
         public string floor_indicator_status = "on";
-        public FloorIndicator(int _elevator_current_floor, string _floor_indicator_status){
+        public FloorIndicator(int _elevator_current_floor, string _floor_indicator_status)
+        {
             elevator_current_floor =_elevator_current_floor;
             floor_indicator_status = _floor_indicator_status;
         }
 
     }
 
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World!");
+            Battery battery = new Battery(4, 66, 5, -6, 60);
 
+            foreach (Column col in battery.columnList) 
+            {
+                Console.WriteLine("Column Instanced : {0} ",col.id);
+                    foreach (Elevator elevator in col.elevatorList)
+                    {
+                        Console.WriteLine("ELEVATOR Instanced Status : {0} ", elevator.status);  
+                    }
+            }
 
-
-
-
+            Console.WriteLine("Call Button ID AND STATUS");
+            foreach (CallButton call_button in battery.callbuttonList)
+            {
+                
+                Console.WriteLine("{0},{1}",call_button.call_button_id,call_button.call_button_status);
+                
+            }
+            
+            //battery.findColumn("g", 5, 5); => { ... bestColum.findBestElevator("g", 5, 5) } / loic
+        }
+    }
 }
