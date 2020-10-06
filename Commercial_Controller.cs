@@ -106,6 +106,10 @@ namespace Rocket_Elevator_Commercial_Controller
             maximum_floor = _max;
         }
 
+        //----------------------------------------------//  
+            // REVIEW FIND BEST ELEVATOR                    
+        //----------------------------------------------//  
+
         public void findBestElevator(int _requested_floor, string _current_direction, int _elevator_current_floor)
         {
             int distance = 0;
@@ -140,8 +144,9 @@ namespace Rocket_Elevator_Commercial_Controller
 
                 if (bestElevatorCase != null)
                 {
-                    Console.WriteLine("COLUMN FOUND AN ELEVATOR");
-                    Console.WriteLine(bestElevatorCase);
+                    Console.WriteLine("COLUMN FOUND AN ELEVATOR {0}", bestElevatorCase.id);
+                    // Console.WriteLine(bestElevatorCase);
+                    Console.WriteLine("this is the best 1");
                 }
 
                 else 
@@ -164,6 +169,7 @@ namespace Rocket_Elevator_Commercial_Controller
                     {
                         Console.WriteLine("COLUMN FOUND AN ELEVATOR");
                         Console.WriteLine(bestElevatorCase);
+                        Console.WriteLine("this is the best 2");
                     }
                 }
                 
@@ -199,6 +205,7 @@ namespace Rocket_Elevator_Commercial_Controller
                 {
                     Console.WriteLine("COLUMN FOUND AN ELEVATOR");
                     Console.WriteLine(bestElevatorCase);
+                    Console.WriteLine("this is the best 3");
                 }
 
                 else 
@@ -221,6 +228,7 @@ namespace Rocket_Elevator_Commercial_Controller
                     {
                         Console.WriteLine("COLUMN FOUND AN ELEVATOR");
                         Console.WriteLine(bestElevatorCase);
+                        Console.WriteLine("this is the best 4");
                     }
                 }
             }
@@ -325,9 +333,11 @@ namespace Rocket_Elevator_Commercial_Controller
 
             battery.columnList[1].elevatorList[3].direction = "down";
             battery.columnList[1].elevatorList[3].current_floor = 15;
-            
+
             battery.columnList[1].elevatorList[4].direction = "down";
             battery.columnList[1].elevatorList[4].current_floor = 6;
+
+            battery.columnList[1].findBestElevator(1, "up", 6);
 
             Console.WriteLine("Call Button ID AND STATUS");
             foreach (CallButton call_button in battery.callbuttonList)
