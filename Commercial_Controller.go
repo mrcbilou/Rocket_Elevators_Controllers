@@ -69,6 +69,11 @@ type CallButton struct {
 	status string
 }
 
+//FloorIndicator
+/* type FloorIndicator struct {
+
+} */
+
 /* func (cb *CallButton) startCallButton(_id int, _floorAmount int ){
 	cb.id =_id
 
