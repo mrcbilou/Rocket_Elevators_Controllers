@@ -33,7 +33,8 @@ func main() {
 
 	bat.columnList[1].elevatorList[4].direction = "down"
 	bat.columnList[1].elevatorList[4].currentFloor = 6
-	bat.columnList[1].findBestElevator(1, "up")
+	fmt.Println(" SCENARIO 1")
+	bat.columnList[1].requestElevator(1, "up", 20)
 }
 
 // Battery ...
@@ -81,6 +82,21 @@ func (c *Column) startColumn(_id int, _elevatorPerColumn int) {
 	for i := 0; i < _elevatorPerColumn; i++ {
 		c.elevatorList = append(c.elevatorList, Elevator{i + 1, "none", 1})
 	}
+}
+
+//_________________________HERE___________________________
+// request elevator function
+//_________________________HERE___________________________
+func (c *Column) requestElevator(_requestedFloor int, _currentDirection string, _userTargetFloor int) {
+	c.findBestElevator(_requestedFloor, _currentDirection)
+	c.bestElevatorCase.moveElevator(_requestedFloor)
+	fmt.Println("ELEVATOR HAS REACHED FLOOR", _requestedFloor)
+	fmt.Println("OPENING DOORS....")
+	fmt.Println("...CLOSING DOORS")
+	c.bestElevatorCase.moveElevator(_userTargetFloor)
+	fmt.Println("ELEVATOR HAS REACHED FLOOR", _userTargetFloor)
+	fmt.Println("OPENING DOORS....")
+	fmt.Println("...CLOSING DOORS")
 }
 
 //find best elevator
@@ -174,6 +190,12 @@ type Elevator struct {
 	id           int
 	direction    string
 	currentFloor int
+}
+
+//move Elevator function
+
+func (e *Elevator) moveElevator(_userTargetFloor int) {
+	_userTargetFloor = e.currentFloor
 }
 
 // CallButton ...
