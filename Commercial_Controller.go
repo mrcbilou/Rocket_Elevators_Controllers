@@ -29,10 +29,10 @@ type Battery struct {
 	callButtonList             []CallButton
 }
 
-func (b *Battery) startBattery(_id int, _columnPerBattery int, _elevatorPerColumn int, _floorAmount int) {
+func (b *Battery) startBattery(_id int, __columnAmount int, _elevatorPerColumn int, _floorAmount int) {
 	b.id = _id
 
-	for i := 0; i < _columnPerBattery; i++ {
+	for i := 0; i < __columnAmount; i++ {
 		b.columnList = append(b.columnList, Column{})
 		b.columnList[i].startColumn(i+1, _elevatorPerColumn)
 	}
