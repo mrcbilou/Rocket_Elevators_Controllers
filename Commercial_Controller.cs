@@ -49,16 +49,17 @@ namespace Rocket_Elevator_Commercial_Controller
                 }
             }
         }
-         public void findBestColumn(int _requested_floor, string _current_direction)
+        public void findBestColumn(int _requested_floor, string _current_direction, int user_target_floor)
         {
             foreach (Column col in columnList)
             {
                 if (_requested_floor >= col.minimum_floor && _requested_floor <= col.maximum_floor)
                 {
-                    col.findBestElevator(_requested_floor, _current_direction);
+                   // best
                 }
             }
-        }
+           // Console.WriteLine("The Best Column For you Is {0} : ", findBestColumn.id )
+        } 
        
 
     }
@@ -116,7 +117,7 @@ namespace Rocket_Elevator_Commercial_Controller
             bestElevatorCase.openDoors("closed");
             //opendoors
         }
-
+        // MODELE OK AVEC BUTTON???
         public void findBestElevator(int _requested_floor, string _current_direction)
         {
             int distance = 0;
@@ -257,10 +258,10 @@ namespace Rocket_Elevator_Commercial_Controller
             direction= _elevator_direction;
             door_status= _door_status;
         }
-        public void CreateRequestList()
+        /* public void CreateRequestList()
         {
 
-        }
+        } */
 
         public void moveElevator(int _target_floor)
         {
@@ -271,6 +272,10 @@ namespace Rocket_Elevator_Commercial_Controller
         {
             status= door_status;
             
+            if(door_status == "opened"){
+
+
+            }
         }
     }
 
