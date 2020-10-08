@@ -12,11 +12,12 @@ namespace Rocket_Elevator_Commercial_Controller
         int floor_amount;
         int battery_lowest_floor;
         int battery_maximum_floor;
+        public Column bestColumnCase;
         public List<List<int>> deservedFloors = new List<List<int>>();
 
         public List<Column> columnList = new List<Column>();
         public List<CallButton> callbuttonList = new List<CallButton>();
-        public Column bestColumnCase = null;
+        
     
         public Battery(int _column_amount, int _floor_amount, int _amount_of_elevator_per_column, int _battery_lowest_floor, int _battery_maximum_floor )
         {
@@ -51,17 +52,28 @@ namespace Rocket_Elevator_Commercial_Controller
         }
         public void findBestColumn(int _requested_floor, string _current_direction, int user_target_floor)
         {
-            foreach (Column col in columnList)
+            if (_requested_floor != 1)
             {
-                if (_requested_floor >= col.minimum_floor && _requested_floor <= col.maximum_floor)
+                foreach (Column col in columnList)
                 {
-                   // best
+                    if (_requested_floor >= col.minimum_floor && _requested_floor <= col.maximum_floor)
+                    {
+                        bestColumnCase = col ;
+                    }    
+                }    
+            }
+            else
+            {
+                foreach (Column col in columnList)
+                {
+                    if (user_target_floor >= col.minimum_floor && user_target_floor <= col.maximum_floor)
+                    {
+                        bestColumnCase = col ;
+                    } 
                 }
             }
-           // Console.WriteLine("The Best Column For you Is {0} : ", findBestColumn.id )
+            Console.WriteLine("The Best Column For You Is {0}  ", bestColumnCase.id );
         } 
-       
-
     }
 
     public class Column
@@ -266,16 +278,18 @@ namespace Rocket_Elevator_Commercial_Controller
         public void moveElevator(int _target_floor)
         {
             current_floor= _target_floor;
+            // search for time sleep
         }
 
         public void openDoors(string door_status)
         {
             status= door_status;
             
-            if(door_status == "opened"){
+           /*  if(door_status == "opened")
+            {
 
 
-            }
+            } */
         }
     }
 
@@ -331,10 +345,11 @@ namespace Rocket_Elevator_Commercial_Controller
                     }
             }*/
 
-            battery.columnList[0].changeRange(1,-6, -1);
+            battery.columnList[0].changeRange(1,-6, 1);
             battery.columnList[1].changeRange(1, 2, 20);
             battery.columnList[2].changeRange(1, 21, 40);
             battery.columnList[3].changeRange(1, 41, 60); 
+
             // SCENARIO 1
             battery.columnList[1].elevatorList[0].direction = "down";
             battery.columnList[1].elevatorList[0].current_floor = 20;
@@ -350,7 +365,9 @@ namespace Rocket_Elevator_Commercial_Controller
 
             battery.columnList[1].elevatorList[4].direction = "down";
             battery.columnList[1].elevatorList[4].current_floor = 6;
-             Console.WriteLine("\n SCENARIO 1 \n");
+
+            Console.WriteLine("\n SCENARIO 1 \n");
+            battery.findBestColumn(1, "up", 20 );
             battery.columnList[1].requestElevator(1, "up", 20 );
 
             // SCENARIO 2
@@ -368,7 +385,9 @@ namespace Rocket_Elevator_Commercial_Controller
 
             battery.columnList[2].elevatorList[4].direction = "down";
             battery.columnList[2].elevatorList[4].current_floor = 39;
+
             Console.WriteLine("\n SCENARIO 2 \n");
+            battery.findBestColumn(1, "up", 36  );
             battery.columnList[2].requestElevator(1, "up", 36 );
 
             // SCENARIO 3
@@ -386,7 +405,9 @@ namespace Rocket_Elevator_Commercial_Controller
 
             battery.columnList[3].elevatorList[4].direction = "down";
             battery.columnList[3].elevatorList[4].current_floor = 60;
+
             Console.WriteLine("\n SCENARIO 3 \n");
+            battery.findBestColumn(54, "down", 1);
             battery.columnList[3].requestElevator(54, "down", 1 );
 
             // SCENARIO 4
@@ -404,7 +425,9 @@ namespace Rocket_Elevator_Commercial_Controller
 
             battery.columnList[0].elevatorList[4].direction = "down";
             battery.columnList[0].elevatorList[4].current_floor = -1;
+
             Console.WriteLine("\n SCENARIO 4 \n");
+            battery.findBestColumn(-3, "up", 1);
             battery.columnList[0].requestElevator(-3, "up", 1 );
 
             //Console.WriteLine("Call Button ID AND STATUS");
@@ -412,7 +435,6 @@ namespace Rocket_Elevator_Commercial_Controller
             { 
                 //Console.WriteLine("{0},{1}",call_button.call_button_id,call_button.call_button_status);
             }*/
-            
             //battery.findColumn("g", 5, 5); => { ... bestColumn.findBestElevator("g", 5, 5) } 
         }
     }
