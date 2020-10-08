@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	bat := Battery{}
+	bat := &Battery{}
 	bat.startBattery(1, 4, 5, 66, -6)
 	fmt.Println("Battery ID :", bat.id)
 	for i := 0; i < len(bat.columnList); i++ {
@@ -17,6 +17,11 @@ func main() {
 	for i := 0; i < len(bat.callButtonList); i++ {
 		fmt.Println(bat.callButtonList[i].id, bat.callButtonList[i].status)
 	}
+	bat.columnList[0].changeRange(-6, -1)
+	bat.columnList[1].changeRange(2, 20)
+	bat.columnList[2].changeRange(21, 40)
+	bat.columnList[3].changeRange(41, 60)
+
 	//--------------------TEST SECTION PARAMETERS-------------------------------------
 	// ----------SCENARIO 1----------
 	bat.columnList[1].elevatorList[0].direction = "down"
@@ -34,6 +39,7 @@ func main() {
 	bat.columnList[1].elevatorList[4].direction = "down"
 	bat.columnList[1].elevatorList[4].currentFloor = 6
 	fmt.Println(" SCENARIO 1")
+	bat.findBestColumn(1, "up", 20)
 	bat.columnList[1].requestElevator(1, "up", 20)
 
 	// ----------SCENARIO 2----------
@@ -52,6 +58,7 @@ func main() {
 	bat.columnList[2].elevatorList[4].direction = "down"
 	bat.columnList[2].elevatorList[4].currentFloor = 39
 	fmt.Println(" SCENARIO 2")
+	bat.findBestColumn(1, "up", 36)
 	bat.columnList[2].requestElevator(1, "up", 36)
 
 	// ----------SCENARIO 3----------
@@ -70,6 +77,7 @@ func main() {
 	bat.columnList[3].elevatorList[4].direction = "down"
 	bat.columnList[3].elevatorList[4].currentFloor = 60
 	fmt.Println(" SCENARIO 3 ")
+	bat.findBestColumn(54, "down", 1)
 	bat.columnList[3].requestElevator(54, "down", 1)
 
 	// ----------SCENARIO 4----------
@@ -88,6 +96,7 @@ func main() {
 	bat.columnList[0].elevatorList[4].direction = "down"
 	bat.columnList[0].elevatorList[4].currentFloor = -1
 	fmt.Println(" SCENARIO 4")
+	bat.findBestColumn(-3, "up", 1)
 	bat.columnList[0].requestElevator(-3, "up", 1)
 }
 
@@ -101,6 +110,7 @@ type Battery struct {
 	batteryMaximumFloor        int
 	columnList                 []Column
 	callButtonList             []CallButton
+	bestColumnCase             int
 }
 
 //creation of a battery
@@ -122,12 +132,36 @@ func (b *Battery) startBattery(_id int, _columnAmount int, _elevatorPerColumn in
 	}
 }
 
+// function
+func (b *Battery) findBestColumn(_requestedFloor int, _currentDirection string, _userTargetFloor int) {
+	if _requestedFloor != 1 {
+		for i := 0; i < len(b.columnList); i++ {
+			if _requestedFloor <= b.columnList[i].maximumFloor && _requestedFloor >= b.columnList[i].minimumFloor {
+				//fmt.Println("hi")
+				b.bestColumnCase = b.columnList[i].id
+				//fmt.Println("The Best Column For You Is", b.columnList[i].id)
+			}
+		}
+	} else {
+		for i := 0; i < len(b.columnList); i++ {
+			if _userTargetFloor <= b.columnList[i].maximumFloor && _userTargetFloor >= b.columnList[i].minimumFloor {
+				//fmt.Println("hi")
+				b.bestColumnCase = b.columnList[i].id
+				//fmt.Println("The Best Column For You Is", b.columnList[i].id)
+			}
+		}
+	}
+	fmt.Println("The Best Column For You Is", b.bestColumnCase)
+}
+
 // Column ...
 type Column struct {
 	id                 int
 	elevatorList       []Elevator
 	bestElevatorCase   Elevator
 	FloorIndicatorList []FloorIndicator
+	minimumFloor       int
+	maximumFloor       int
 }
 
 // create elevator list
@@ -141,6 +175,12 @@ func (c *Column) startColumn(_id int, _elevatorPerColumn int) {
 	for i := 1; i < len(c.elevatorList); i++ {
 		c.FloorIndicatorList = append(c.FloorIndicatorList, FloorIndicator{c.elevatorList[i].currentFloor, "on"})
 	}
+}
+
+func (c *Column) changeRange(_min int, _max int) {
+
+	c.minimumFloor = _min
+	c.maximumFloor = _max
 }
 
 // request elevator function
