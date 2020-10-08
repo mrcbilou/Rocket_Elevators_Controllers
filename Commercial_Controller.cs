@@ -149,7 +149,7 @@ namespace Rocket_Elevator_Commercial_Controller
             bestElevatorCase.openDoors("closed");
             //opendoors
         }
-        // MODELE OK AVEC BUTTON???
+        
         public void findBestElevator(int _requested_floor, string _current_direction)
         {
             int distance = 0;
@@ -290,10 +290,6 @@ namespace Rocket_Elevator_Commercial_Controller
             direction= _elevator_direction;
             door_status= _door_status;
         }
-        /* public void CreateRequestList()
-        {
-
-        } */
 
         public void moveElevator(int _target_floor)
         {

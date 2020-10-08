@@ -336,3 +336,5 @@ type FloorIndicator struct {
 	elevatorCurrentFloor int
 	floorIndicatorStatus string
 }
+
+// needs commenting
