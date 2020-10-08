@@ -14,9 +14,9 @@ func main() {
 			fmt.Println("Elevator ID :", bat.columnList[i].elevatorList[j].id)
 		}
 	}
-	for i := 0; i < len(bat.callButtonList); i++ {
+	/* for i := 0; i < len(bat.callButtonList); i++ {
 		fmt.Println(bat.callButtonList[i].id, bat.callButtonList[i].status)
-	}
+	} */
 	bat.columnList[0].changeRange(-6, -1)
 	bat.columnList[1].changeRange(2, 20)
 	bat.columnList[2].changeRange(21, 40)
@@ -40,7 +40,7 @@ func main() {
 	bat.columnList[1].elevatorList[4].currentFloor = 6
 	fmt.Println(" SCENARIO 1")
 	bat.findBestColumn(1, "up", 20)
-	bat.columnList[1].requestElevator(1, "up", 20)
+	//bat.columnList[1].requestElevator(1, "up", 20)
 
 	// ----------SCENARIO 2----------
 	bat.columnList[2].elevatorList[0].direction = "none"
@@ -59,7 +59,7 @@ func main() {
 	bat.columnList[2].elevatorList[4].currentFloor = 39
 	fmt.Println(" SCENARIO 2")
 	bat.findBestColumn(1, "up", 36)
-	bat.columnList[2].requestElevator(1, "up", 36)
+	//bat.columnList[2].requestElevator(1, "up", 36)
 
 	// ----------SCENARIO 3----------
 	bat.columnList[3].elevatorList[0].direction = "down"
@@ -78,7 +78,7 @@ func main() {
 	bat.columnList[3].elevatorList[4].currentFloor = 60
 	fmt.Println(" SCENARIO 3 ")
 	bat.findBestColumn(54, "down", 1)
-	bat.columnList[3].requestElevator(54, "down", 1)
+	//bat.columnList[3].requestElevator(54, "down", 1)
 
 	// ----------SCENARIO 4----------
 	bat.columnList[0].elevatorList[0].direction = "none"
@@ -97,7 +97,7 @@ func main() {
 	bat.columnList[0].elevatorList[4].currentFloor = -1
 	fmt.Println(" SCENARIO 4")
 	bat.findBestColumn(-3, "up", 1)
-	bat.columnList[0].requestElevator(-3, "up", 1)
+	//bat.columnList[0].requestElevator(-3, "up", 1)
 }
 
 // Battery ...
@@ -139,6 +139,7 @@ func (b *Battery) findBestColumn(_requestedFloor int, _currentDirection string, 
 			if _requestedFloor <= b.columnList[i].maximumFloor && _requestedFloor >= b.columnList[i].minimumFloor {
 				//fmt.Println("hi")
 				b.bestColumnCase = b.columnList[i].id
+				b.columnList[i].requestElevator(_requestedFloor, _currentDirection, _userTargetFloor)
 				//fmt.Println("The Best Column For You Is", b.columnList[i].id)
 			}
 		}
@@ -147,6 +148,7 @@ func (b *Battery) findBestColumn(_requestedFloor int, _currentDirection string, 
 			if _userTargetFloor <= b.columnList[i].maximumFloor && _userTargetFloor >= b.columnList[i].minimumFloor {
 				//fmt.Println("hi")
 				b.bestColumnCase = b.columnList[i].id
+				b.columnList[i].assignElevator(_requestedFloor, _currentDirection, _userTargetFloor)
 				//fmt.Println("The Best Column For You Is", b.columnList[i].id)
 			}
 		}
@@ -167,6 +169,7 @@ type Column struct {
 // create elevator list
 func (c *Column) startColumn(_id int, _elevatorPerColumn int) {
 	c.id = _id
+	c.bestElevatorCase = Elevator{0, "", 0, ""}
 
 	for i := 0; i < _elevatorPerColumn; i++ {
 		c.elevatorList = append(c.elevatorList, Elevator{i + 1, "none", 1, "closed"})
@@ -200,9 +203,26 @@ func (c *Column) requestElevator(_requestedFloor int, _currentDirection string, 
 	fmt.Println("...CLOSING DOORS")
 }
 
+func (c *Column) assignElevator(_requestedFloor int, _currentDirection string, _userTargetFloor int) {
+	c.findBestElevator(_requestedFloor, _currentDirection)
+	fmt.Println("You HAVE BEEN ASSIGNED ELEVATOR NUMBER : ", c.bestElevatorCase.id)
+	c.bestElevatorCase.moveElevator(_requestedFloor)
+	fmt.Println("ELEVATOR WILL PICK YOU UP AT RC")
+	c.bestElevatorCase.openDoors("opened")
+	fmt.Println("OPENING DOORS....")
+	c.bestElevatorCase.openDoors("closed")
+	fmt.Println("...CLOSING DOORS")
+	c.bestElevatorCase.moveElevator(_userTargetFloor)
+	fmt.Println("ELEVATOR HAS REACHED FLOOR", _userTargetFloor)
+	c.bestElevatorCase.openDoors("opened")
+	fmt.Println("OPENING DOORS....")
+	c.bestElevatorCase.openDoors("closed")
+	fmt.Println("...CLOSING DOORS")
+}
+
 //find best elevator
 func (c *Column) findBestElevator(_requestedFloor int, _currentDirection string) {
-	bestElevatorCase := -1
+
 	distance := 0
 	bestDistance := 99
 
@@ -214,20 +234,20 @@ func (c *Column) findBestElevator(_requestedFloor int, _currentDirection string)
 
 				if distance < bestDistance {
 					bestDistance = distance
-					bestElevatorCase = i
+					c.bestElevatorCase = c.elevatorList[i]
 				}
 			} else if _currentDirection == "down" && _currentDirection != c.elevatorList[i].direction && _requestedFloor >= c.elevatorList[i].currentFloor {
 				distance = _requestedFloor - c.elevatorList[i].currentFloor
 
 				if distance < bestDistance {
 					bestDistance = distance
-					bestElevatorCase = i
+					c.bestElevatorCase = c.elevatorList[i]
 				}
 			}
 		}
-		if bestElevatorCase != -1 {
-			fmt.Println("COLUMN FOUND AN ELEVATOR ", bestElevatorCase)
-			fmt.Println("this is the best 1")
+		if c.bestElevatorCase.id != 0 {
+			fmt.Println("COLUMN FOUND THE BEST ELEVATOR FOR YOU ", c.bestElevatorCase.id)
+			//fmt.Println("this is the best 1")
 		} else {
 			for i := 0; i < len(c.elevatorList); i++ {
 				if _currentDirection == "none" {
@@ -235,13 +255,13 @@ func (c *Column) findBestElevator(_requestedFloor int, _currentDirection string)
 
 					if distance < bestDistance {
 						bestDistance = distance
-						bestElevatorCase = i
+						c.bestElevatorCase = c.elevatorList[i]
 					}
 				}
 			}
-			if bestElevatorCase != -1 {
-				fmt.Println("COLUMN FOUND AN ELEVATOR ", bestElevatorCase)
-				fmt.Println("this is the best 2")
+			if c.bestElevatorCase.id != 0 {
+				fmt.Println("COLUMN FOUND THE BEST ELEVATOR FOR YOU ", c.bestElevatorCase.id)
+				//fmt.Println("this is the best 2")
 			}
 		}
 	} else {
@@ -251,20 +271,20 @@ func (c *Column) findBestElevator(_requestedFloor int, _currentDirection string)
 
 				if distance < bestDistance {
 					bestDistance = distance
-					bestElevatorCase = i
+					c.bestElevatorCase = c.elevatorList[i]
 				}
 			} else if _currentDirection == "down" && _currentDirection == c.elevatorList[i].direction && _requestedFloor <= c.elevatorList[i].currentFloor {
 				distance = c.elevatorList[i].currentFloor - _requestedFloor
 
 				if distance < bestDistance {
 					bestDistance = distance
-					bestElevatorCase = i
+					c.bestElevatorCase = c.elevatorList[i]
 				}
 			}
 		}
-		if bestElevatorCase != -1 {
-			fmt.Println("COLUMN FOUND AN ELEVATOR ", bestElevatorCase)
-			fmt.Println("this is the best 3")
+		if c.bestElevatorCase.id != 0 {
+			fmt.Println("COLUMN FOUND THE BEST ELEVATOR FOR YOU ", c.bestElevatorCase.id)
+			//fmt.Println("this is the best 3")
 		} else {
 			for i := 0; i < len(c.elevatorList); i++ {
 				if _currentDirection == "none" {
@@ -272,13 +292,13 @@ func (c *Column) findBestElevator(_requestedFloor int, _currentDirection string)
 
 					if distance < bestDistance {
 						bestDistance = distance
-						bestElevatorCase = i
+						c.bestElevatorCase = c.elevatorList[i]
 					}
 				}
 			}
-			if bestElevatorCase != -1 {
-				fmt.Println("COLUMN FOUND AN ELEVATOR ", bestElevatorCase)
-				fmt.Println("this is the best 4")
+			if c.bestElevatorCase.id != 0 {
+				fmt.Println("COLUMN FOUND THE BEST ELEVATOR FOR YOU ", c.bestElevatorCase.id)
+				//fmt.Println("this is the best 4")
 			}
 		}
 
