@@ -59,6 +59,7 @@ namespace Rocket_Elevator_Commercial_Controller
                     if (_requested_floor >= col.minimum_floor && _requested_floor <= col.maximum_floor)
                     {
                         bestColumnCase = col ;
+                        col.requestElevator( _requested_floor,  _current_direction,user_target_floor);
                     }    
                 }    
             }
@@ -69,6 +70,7 @@ namespace Rocket_Elevator_Commercial_Controller
                     if (user_target_floor >= col.minimum_floor && user_target_floor <= col.maximum_floor)
                     {
                         bestColumnCase = col ;
+                        col.assingElevator( _requested_floor,  _current_direction, user_target_floor);
                     } 
                 }
             }
@@ -117,6 +119,24 @@ namespace Rocket_Elevator_Commercial_Controller
             findBestElevator(_requested_floor, _current_direction);
             bestElevatorCase.moveElevator(_requested_floor);
             Console.WriteLine("Elevator Has Reached FLoor : {0} ",_requested_floor);
+            bestElevatorCase.openDoors("opened");
+            Console.WriteLine("Opening Doors");
+            bestElevatorCase.openDoors("closed");
+            Console.WriteLine("Closing Doors");
+            bestElevatorCase.moveElevator(user_target_floor);
+            Console.WriteLine("Elevator Has Reached FLoor : {0} ",user_target_floor);
+            Console.WriteLine("Opening Doors");
+            bestElevatorCase.openDoors("opened");
+            Console.WriteLine("Closing Doors");
+            bestElevatorCase.openDoors("closed");
+            //opendoors
+        }
+        public void assingElevator(int _requested_floor, string  _current_direction, int user_target_floor )
+        {  
+            findBestElevator(_requested_floor, _current_direction);
+            Console.WriteLine("YOU HAVE BEEN ASSIGNED ELEVATOR NUMBER : {0}", bestElevatorCase.id);
+            bestElevatorCase.moveElevator(_requested_floor);
+            Console.WriteLine("ELEVATOR WILL PICK YOU UP AT RC");
             bestElevatorCase.openDoors("opened");
             Console.WriteLine("Opening Doors");
             bestElevatorCase.openDoors("closed");
@@ -368,7 +388,7 @@ namespace Rocket_Elevator_Commercial_Controller
 
             Console.WriteLine("\n SCENARIO 1 \n");
             battery.findBestColumn(1, "up", 20 );
-            battery.columnList[1].requestElevator(1, "up", 20 );
+            //battery.columnList[1].requestElevator(1, "up", 20 );
 
             // SCENARIO 2
             battery.columnList[2].elevatorList[0].direction = "none";
@@ -388,7 +408,7 @@ namespace Rocket_Elevator_Commercial_Controller
 
             Console.WriteLine("\n SCENARIO 2 \n");
             battery.findBestColumn(1, "up", 36  );
-            battery.columnList[2].requestElevator(1, "up", 36 );
+           // battery.columnList[2].requestElevator(1, "up", 36 );
 
             // SCENARIO 3
             battery.columnList[3].elevatorList[0].direction = "down";
@@ -408,7 +428,7 @@ namespace Rocket_Elevator_Commercial_Controller
 
             Console.WriteLine("\n SCENARIO 3 \n");
             battery.findBestColumn(54, "down", 1);
-            battery.columnList[3].requestElevator(54, "down", 1 );
+            //battery.columnList[3].requestElevator(54, "down", 1 );
 
             // SCENARIO 4
             battery.columnList[0].elevatorList[0].direction = "none";
@@ -428,7 +448,7 @@ namespace Rocket_Elevator_Commercial_Controller
 
             Console.WriteLine("\n SCENARIO 4 \n");
             battery.findBestColumn(-3, "up", 1);
-            battery.columnList[0].requestElevator(-3, "up", 1 );
+           // battery.columnList[0].requestElevator(-3, "up", 1 );
 
             //Console.WriteLine("Call Button ID AND STATUS");
             /*foreach (CallButton call_button in battery.callbuttonList)
