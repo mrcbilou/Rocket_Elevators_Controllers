@@ -1,9 +1,23 @@
+/* /***********************************************************************;
+* Project           : Commercial_Controller
+*
+* Program name      : Commercial_Controller.go
+*
+* Author            : Louis-Felix Beland
+*
+* Date created      : 9 October 2020
+*
+* Purpose           : Programming an algorithm for a Commercial Elevator Controller
+*
+|**********************************************************************/
+
 package main
 
 import (
 	"fmt"
 )
 
+// this is the main function that will be ran on execution
 func main() {
 	bat := &Battery{}
 	bat.startBattery(1, 4, 5, 66, -6)
@@ -132,21 +146,21 @@ func (b *Battery) startBattery(_id int, _columnAmount int, _elevatorPerColumn in
 	}
 }
 
-// function
+// function to fin the best column
 func (b *Battery) findBestColumn(_requestedFloor int, _currentDirection string, _userTargetFloor int) {
-	if _requestedFloor != 1 {
+	if _requestedFloor != 1 { // if the requested floor is not RC the request elevator function is applied
 		for i := 0; i < len(b.columnList); i++ {
 			if _requestedFloor <= b.columnList[i].maximumFloor && _requestedFloor >= b.columnList[i].minimumFloor {
-				//fmt.Println("hi")
+				//fmt.Println("hi1")
 				b.bestColumnCase = b.columnList[i].id
 				b.columnList[i].requestElevator(_requestedFloor, _currentDirection, _userTargetFloor)
 				//fmt.Println("The Best Column For You Is", b.columnList[i].id)
 			}
 		}
-	} else {
+	} else { // Otherwise if you are at RC a column and elevator will be assigned to the user when the request is made
 		for i := 0; i < len(b.columnList); i++ {
 			if _userTargetFloor <= b.columnList[i].maximumFloor && _userTargetFloor >= b.columnList[i].minimumFloor {
-				//fmt.Println("hi")
+				//fmt.Println("hi2")
 				b.bestColumnCase = b.columnList[i].id
 				b.columnList[i].assignElevator(_requestedFloor, _currentDirection, _userTargetFloor)
 				//fmt.Println("The Best Column For You Is", b.columnList[i].id)
@@ -180,13 +194,14 @@ func (c *Column) startColumn(_id int, _elevatorPerColumn int) {
 	}
 }
 
+// this function will assign a dedicated RANGE to a particular Column
 func (c *Column) changeRange(_min int, _max int) {
 
 	c.minimumFloor = _min
 	c.maximumFloor = _max
 }
 
-// request elevator function
+//  this function will make the elevator move based on the request made by the user
 func (c *Column) requestElevator(_requestedFloor int, _currentDirection string, _userTargetFloor int) {
 	c.findBestElevator(_requestedFloor, _currentDirection)
 	c.bestElevatorCase.moveElevator(_requestedFloor)
@@ -203,6 +218,7 @@ func (c *Column) requestElevator(_requestedFloor int, _currentDirection string, 
 	fmt.Println("...CLOSING DOORS")
 }
 
+//  this function will assign an elevator and make it move based on the request made by the user
 func (c *Column) assignElevator(_requestedFloor int, _currentDirection string, _userTargetFloor int) {
 	c.findBestElevator(_requestedFloor, _currentDirection)
 	fmt.Println("You HAVE BEEN ASSIGNED ELEVATOR NUMBER : ", c.bestElevatorCase.id)
@@ -220,13 +236,13 @@ func (c *Column) assignElevator(_requestedFloor int, _currentDirection string, _
 	fmt.Println("...CLOSING DOORS")
 }
 
-//find best elevator
+// this function will find the best elevator based on the current requested floor and the direction of the elevator
 func (c *Column) findBestElevator(_requestedFloor int, _currentDirection string) {
 
 	distance := 0
 	bestDistance := 99
 
-	if _requestedFloor == 1 {
+	if _requestedFloor == 1 { // if the requested floor is RC the function will retun an elevator object based on the previous parameters
 
 		for i := 0; i < len(c.elevatorList); i++ {
 			if _currentDirection == "up" && _currentDirection != c.elevatorList[i].direction && _requestedFloor <= c.elevatorList[i].currentFloor {
@@ -264,7 +280,7 @@ func (c *Column) findBestElevator(_requestedFloor int, _currentDirection string)
 				//fmt.Println("this is the best 2")
 			}
 		}
-	} else {
+	} else { // OTHERWISE the function will return an ELEVATOR object based on the same previous parameters but inverted on the direction for better priority
 		for i := 0; i < len(c.elevatorList); i++ {
 			if _currentDirection == "up" && _currentDirection == c.elevatorList[i].direction && _requestedFloor >= c.elevatorList[i].currentFloor {
 				distance = _requestedFloor - c.elevatorList[i].currentFloor
@@ -314,13 +330,13 @@ type Elevator struct {
 	doorStatus   string
 }
 
-//move Elevator function
+// this is the function that moves Elevator it is called on the requestElevator and the assignElevator functions
 
 func (e *Elevator) moveElevator(_userTargetFloor int) {
 	_userTargetFloor = e.currentFloor
 }
 
-// openDoors function
+// this is the function that open the doors on the elevator it is called on the requestElevator and the assignElevator functions
 func (e *Elevator) openDoors(doorStatus string) {
 	doorStatus = e.doorStatus
 }
@@ -336,5 +352,3 @@ type FloorIndicator struct {
 	elevatorCurrentFloor int
 	floorIndicatorStatus string
 }
-
-// needs commenting

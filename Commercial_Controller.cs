@@ -1,10 +1,23 @@
+/* /***********************************************************************;
+* Project           : Commercial_Controller
+*
+* Program name      : Commercial_Controller.cs
+*
+* Author            : Louis-Felix Beland
+*
+* Date created      : 9 October 2020
+*
+* Purpose           : Programming an algorithm for a Commercial Elevator Controller
+*
+|**********************************************************************/ 
+
 using System;
 using System.Collections.Generic;
 
 namespace Rocket_Elevator_Commercial_Controller
 {
     
-    public class Battery
+    public class Battery // This is the definition of the Battery Object
     {
         // member variables
         int column_amount;
@@ -18,7 +31,7 @@ namespace Rocket_Elevator_Commercial_Controller
         public List<Column> columnList = new List<Column>();
         public List<CallButton> callbuttonList = new List<CallButton>();
         
-    
+        // This is the Constructor of the BATTERY object 
         public Battery(int _column_amount, int _floor_amount, int _amount_of_elevator_per_column, int _battery_lowest_floor, int _battery_maximum_floor )
         {
             column_amount = _column_amount;
@@ -27,13 +40,13 @@ namespace Rocket_Elevator_Commercial_Controller
             battery_lowest_floor = _battery_lowest_floor;
             battery_maximum_floor = _battery_maximum_floor;
             
-            // create column list
+            // this function will create the column list
             for(int i = 1 ; i <= _column_amount; i++)
             {
                 Column col = new Column(_floor_amount, i, _amount_of_elevator_per_column);
                 columnList.Add(col);
             }
-            //create call button list
+            //this function will create the  call button list
             for(int i = 1; i <= floor_amount; i++)
             {
                 int j = i + _battery_lowest_floor - 1 ;
@@ -50,9 +63,10 @@ namespace Rocket_Elevator_Commercial_Controller
                 }
             }
         }
+        // this is the function that will Find the best column for the user
         public void findBestColumn(int _requested_floor, string _current_direction, int user_target_floor)
         {
-            if (_requested_floor != 1)
+            if (_requested_floor != 1) // if the requested floor is not RC the request elevator function is applied
             {
                 foreach (Column col in columnList)
                 {
@@ -63,7 +77,7 @@ namespace Rocket_Elevator_Commercial_Controller
                     }    
                 }    
             }
-            else
+            else // Otherwise if you are at RC a column and elevator will be assigned to the user when the request is made
             {
                 foreach (Column col in columnList)
                 {
@@ -78,7 +92,7 @@ namespace Rocket_Elevator_Commercial_Controller
         } 
     }
 
-    public class Column
+    public class Column   // This is the definition of the Column Object
     {
         public int id;
         public int floor_amount;
@@ -89,13 +103,13 @@ namespace Rocket_Elevator_Commercial_Controller
         public List<FloorIndicator> floorIndicatorList = new List<FloorIndicator>();
         public Elevator bestElevatorCase = null;
 
-        
+        // This is the Constructor function off the COLUMN object
         public Column (int _floor_amount, int _id ,int _amount_of_elevator_per_column) {
             id = _id;
             floor_amount = _floor_amount;
             amount_of_elevator_per_column =_amount_of_elevator_per_column;
             
-            // create elevator list
+            // this will create the elevator list
             for(int i = 1; i<= amount_of_elevator_per_column; i++){
                 Elevator elevator = new Elevator (i,"on",1,"none","closed");
                 elevatorList.Add(elevator);
@@ -106,7 +120,7 @@ namespace Rocket_Elevator_Commercial_Controller
                 floorIndicatorList.Add(floor_indicator);
             }
         }
-
+        // this function will assign a dedicated RANGE to a particular Column
         public void changeRange(int _ground_floor,int _min, int _max)
         {   
             _ground_floor = 1;
@@ -114,6 +128,7 @@ namespace Rocket_Elevator_Commercial_Controller
             maximum_floor = _max;
         }
         
+        //  this function will make the elevator move based on the request made by the user
          public void requestElevator(int _requested_floor, string  _current_direction, int user_target_floor )
         {  
             findBestElevator(_requested_floor, _current_direction);
@@ -129,8 +144,8 @@ namespace Rocket_Elevator_Commercial_Controller
             bestElevatorCase.openDoors("opened");
             Console.WriteLine("Closing Doors");
             bestElevatorCase.openDoors("closed");
-            //opendoors
         }
+        //  this function will assign an elevator and make it move based on the request made by the user
         public void assingElevator(int _requested_floor, string  _current_direction, int user_target_floor )
         {  
             findBestElevator(_requested_floor, _current_direction);
@@ -147,15 +162,15 @@ namespace Rocket_Elevator_Commercial_Controller
             bestElevatorCase.openDoors("opened");
             Console.WriteLine("Closing Doors");
             bestElevatorCase.openDoors("closed");
-            //opendoors
         }
         
+        // this function will find the best elevator based on the current requested floor and the direction of the elevator
         public void findBestElevator(int _requested_floor, string _current_direction)
         {
             int distance = 0;
             int bestDistance = 99;
 
-            if (_requested_floor == 1)
+            if (_requested_floor == 1)   // if the requested floor is RC the function will retun an elevator object based on the previous parameters
             {
                 foreach (Elevator elevator in elevatorList)
                 {
@@ -214,7 +229,7 @@ namespace Rocket_Elevator_Commercial_Controller
                 }
                 
             } 
-            else 
+            else // OTHERWISE the function will return an ELEVATOR object based on the same previous parameters but inverted on the direction for better priority
             {
                 foreach (Elevator elevator in elevatorList)
                 {
@@ -275,7 +290,7 @@ namespace Rocket_Elevator_Commercial_Controller
         }
     }
 
-    public class Elevator
+    public class Elevator  // This is the definition of the Elevator Object
     {
         public string status;
         public int current_floor;
@@ -283,6 +298,7 @@ namespace Rocket_Elevator_Commercial_Controller
         public int id;
         public string door_status;
 
+        // this is the constructor function of the ELEVATOR object
         public Elevator (int _id, string _elevator_status, int _elevator_current_floor, string _elevator_direction, string _door_status){
             id = _id;
             status= _elevator_status;
@@ -291,41 +307,36 @@ namespace Rocket_Elevator_Commercial_Controller
             door_status= _door_status;
         }
 
+        // this is the function that moves Elevator it is called on the requestElevator and the assignElevator functions
         public void moveElevator(int _target_floor)
         {
             current_floor= _target_floor;
-            // search for time sleep
         }
 
+        // this is the function that open the doors on the elevator it is called on the requestElevator and the assignElevator functions
         public void openDoors(string door_status)
         {
             status= door_status;
-            
-           /*  if(door_status == "opened")
-            {
-
-
-            } */
         }
     }
 
-    public class CallButton {
+    public class CallButton   // This is the definition of the CallButton Object
+    {
         public string call_button_status = "off";
         public int call_button_id;
         
+        // this is the constructor function for the CAll button object
         public CallButton(string _call_button_status, int _call_button_id){
             call_button_status = _call_button_status;
             call_button_id = _call_button_id;
         }
-    
-
     }
 
-    public class RequestFloorButton
+    public class RequestFloorButton    // This is the definition of the RequestFloorButton Object
     {
         public string request_floor_button_status ="off";
         public int request_floor_button_id;
-
+        // this is the constructor function for the request button object
         public RequestFloorButton(string _request_floor_button_status, int _request_floor_button_id)
         {
             request_floor_button_status = _request_floor_button_status;
@@ -333,10 +344,12 @@ namespace Rocket_Elevator_Commercial_Controller
         }
     }
 
-    public class FloorIndicator
+    public class FloorIndicator     // This is the definition of the FloorIndicator Object
     {
         public int elevator_current_floor;
         public string floor_indicator_status = "on";
+
+        // this is the constructor function for the Floor indicator object
         public FloorIndicator(int _elevator_current_floor, string _floor_indicator_status)
         {
             elevator_current_floor =_elevator_current_floor;
@@ -345,7 +358,7 @@ namespace Rocket_Elevator_Commercial_Controller
 
     }
 
-    class Program
+    class Program    //// This is the Main program that will be ran on execution
     {
         static void Main(string[] args)
         {
